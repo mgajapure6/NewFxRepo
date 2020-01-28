@@ -180,8 +180,8 @@ public class login implements Initializable {
 
 			App.getUserDetail().setProfileAction(event -> {
 				App.getUserDetail().getPopOver().hide();
-				Main.ctrl.title.setText("Profile");
-				Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+				//Main.ctrl.title.setText("Profile");
+				//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
 			});
 
 			App.getUserDetail().setSignAction(event -> {

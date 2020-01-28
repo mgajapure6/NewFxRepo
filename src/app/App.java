@@ -101,7 +101,7 @@ public class App extends Application {
 //		load("controls", "treeview");
 //		load("controls", "treetableview");
 
-		//load("dashboard", "dashboard");
+		
 
 //		load("charts", "piechart");
 //		load("charts", "areachart");
@@ -112,14 +112,19 @@ public class App extends Application {
 //		load("charts", "stackedareachart");
 //		load("charts", "scatterchart");
 
-		//load("main", "main");
+		
 
 //		load("profile", "profile");
 
+		
 		load("login", "login");
 		load("login", "account");
+		load("main", "main");
+		load("dashboard", "dashboard");
+		load("product", "productView");
+		load("customer", "customerView");
 		try {
-			wait(300);
+			wait(10000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -147,7 +152,7 @@ public class App extends Application {
 
 	private void initialScene() {
 
-		decorator.setTitle("DashboardFx");
+		decorator.setTitle("MMC Store");
 //        decorator.setIcon(null);
 		decorator.addButton(ButtonType.FULL_EFFECT);
 		decorator.initTheme(GNDecorator.Theme.DEFAULT);
@@ -157,12 +162,14 @@ public class App extends Application {
 		assert log != null;
 
 		if (log.equals("account") || log.equals("login")) {
+			System.out.println("initialScene if");
 			decorator.setContent(ViewManager.getInstance().get(log));
 		} else {
+			System.out.println("initialScene else");
 			App.decorator.addCustom(userDetail);
 			userDetail.setProfileAction(event -> {
-				Main.ctrl.title.setText("Profile");
-				Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+				//Main.ctrl.title.setText("Profile");
+				//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
 				userDetail.getPopOver().hide();
 			});
 

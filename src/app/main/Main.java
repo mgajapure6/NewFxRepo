@@ -406,6 +406,18 @@ public class Main implements Initializable {
 	}
 
 	@FXML
+	private void productView() {
+		title.setText("Products");
+		body.setContent(ViewManager.getInstance().get("productView"));
+	}
+	
+	@FXML
+	private void customerView() {
+		title.setText("Customers");
+		body.setContent(ViewManager.getInstance().get("customerView"));
+	}
+	
+	@FXML
 	private void buttons() {
 		body.setContent(ViewManager.getInstance().get("button"));
 		title.setText("Button");

@@ -152,8 +152,8 @@ public class Account implements Initializable {
 		App.decorator.addCustom(detail);
 		detail.setProfileAction(event -> {
 			App.getUserDetail().getPopOver().hide();
-			Main.ctrl.title.setText("Profile");
-			Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+			//Main.ctrl.title.setText("Profile");
+			//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
 
 		});
 
