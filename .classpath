@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="lib" path="lib/animatefx-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/colors-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/controlsfx-8.40.14.jar"/>
+	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/fontawesomefx-8.9.jar"/>
+	<classpathentry kind="lib" path="lib/GNAvatarView-1.0-rc.jar"/>
+	<classpathentry kind="lib" path="lib/GNButton-1.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/GNCalendar-1.0-alpha.jar"/>
+	<classpathentry kind="lib" path="lib/GNCarousel-2.1.5.jar"/>
+	<classpathentry kind="lib" path="lib/GNDecorator-2.1.2-alpha.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-commons-annotations-5.0.4.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-core-5.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-entitymanager-5.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-java8-5.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
+	<classpathentry kind="lib" path="lib/hibernate-validator-6.0.16.Final.jar"/>
+	<classpathentry kind="lib" path="lib/itextpdf-5.5.11.jar"/>
+	<classpathentry kind="lib" path="lib/jfoenix-8.0.7.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.39.jar"/>
+	<classpathentry kind="lib" path="lib/scenicView.jar"/>
+	<classpathentry kind="lib" path="lib/tilesfx-1.5.2.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
