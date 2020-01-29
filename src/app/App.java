@@ -64,67 +64,16 @@ public class App extends Application {
 		float total = 43; // the difference represents the views not loaded
 		increment = 100f / total;
 
-//		load("jfoenix", "jfx-text-field");
-//
-//		load("designer", "cards");
-//		load("designer", "banners");
-//		load("designer", "carousel");
-//		load("designer", "animated-button");
-//		load("designer", "alerts");
-//
-//		load("controls", "button");
-//		load("controls", "toggle");
-//		load("controls", "textfield");
-//		load("controls", "text-area");
-//		load("controls", "datepicker");
-//		load("controls", "checkbox");
-//		load("controls", "radiobutton");
-//		load("controls", "combobox");
-//		load("controls", "choicebox");
-//		load("controls", "splitmenubutton");
-//		load("controls", "menubutton");
-//		load("controls", "menubar");
-//		load("controls", "colorpicker");
-//		load("controls", "slider");
-//		load("controls", "spinner");
-//		load("controls", "progressbar");
-//		load("controls", "progressindicator");
-//		load("controls", "pagination");
-//		load("controls", "mediaview");
-//		load("controls", "listview");
-//		load("controls", "label");
-//		load("controls", "hyperlink");
-//		load("controls", "imageview");
-//		load("controls", "tableview");
-//		load("controls", "scrollbar");
-//		load("controls", "passwordfield");
-//		load("controls", "treeview");
-//		load("controls", "treetableview");
-
-		
-
-//		load("charts", "piechart");
-//		load("charts", "areachart");
-//		load("charts", "barchart");
-//		load("charts", "bubblechart");
-//		load("charts", "linechart");
-//		load("charts", "stackedbarchart");
-//		load("charts", "stackedareachart");
-//		load("charts", "scatterchart");
-
-		
-
-//		load("profile", "profile");
-
-		
 		load("login", "login");
 		load("login", "account");
+		load("main", "customerHomeView");
 		load("main", "main");
 		load("dashboard", "dashboard");
 		load("product", "productView");
 		load("customer", "customerView");
+		load("bill", "billView");
 		try {
-			wait(10000);
+			wait(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +104,7 @@ public class App extends Application {
 		decorator.setTitle("MMC Store");
 //        decorator.setIcon(null);
 		decorator.addButton(ButtonType.FULL_EFFECT);
-		decorator.initTheme(GNDecorator.Theme.DEFAULT);
+		decorator.initTheme(GNDecorator.Theme.CUSTOM);
 //        decorator.fullBody();
 
 		String log = logged();
@@ -184,7 +133,9 @@ public class App extends Application {
 					Main.popup.hide();
 				App.decorator.removeCustom(userDetail);
 			});
-			decorator.setContent(ViewManager.getInstance().get("main"));
+			
+			
+			decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
 		}
 
 		decorator.getStage().setOnCloseRequest(event -> {

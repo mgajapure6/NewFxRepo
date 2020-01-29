@@ -163,6 +163,7 @@ public class login implements Initializable {
 	private void enter() {
 
 		User user = UserManager.get(username.getText());
+		System.out.println("user::"+user);
 
 		if (user.getUserName().equals(this.username.getText()) && user.getPassword().equals(this.password.getText())) {
 			Section section = new Section();

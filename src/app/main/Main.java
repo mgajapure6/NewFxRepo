@@ -1,19 +1,4 @@
-/*
- * Copyright (C) Gleidson Neves da Silveira
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package app.main;
 
 import com.gn.GNAvatarView;
@@ -110,6 +95,11 @@ public class Main implements Initializable {
 
 	@FXML
 	private RadioButton available;
+	
+	@FXML
+	private HBox navigationHbox;
+	@FXML
+	private HBox main;
 
 	private FilteredList<Button> filteredList = null;
 
@@ -135,13 +125,13 @@ public class Main implements Initializable {
 		ctrl = this;
 		loadContentPopup();
 
-		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
-			@Override
-			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
-				cStatus.setFill(((RadioButton) newValue).getTextFill());
-				status.setText(((RadioButton) newValue).getText());
-			}
-		});
+//		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+//				cStatus.setFill(((RadioButton) newValue).getTextFill());
+//				status.setText(((RadioButton) newValue).getText());
+//			}
+//		});
 
 		populateItems();
 		filteredList = new FilteredList<>(items, s -> true);
@@ -170,6 +160,10 @@ public class Main implements Initializable {
 			e.printStackTrace();
 		}
 //        drawer.setPopStylesheet(getClass().getResource("/com/gn/theme/css/popover.css"));
+		
+		main.setOnMouseClicked((e)->{
+			
+        });
 	}
 
 	@FXML
@@ -182,8 +176,9 @@ public class Main implements Initializable {
 
 			drawer.setPrefWidth(minimum);
 
-			drawer.getChildren().remove(info);
+			//drawer.getChildren().remove(info);
 			drawer.getChildren().remove(searchBox);
+			drawer.getChildren().remove(navigationHbox);
 
 			for (Node node : views.getChildren()) {
 				if (node instanceof Button) {
@@ -199,16 +194,17 @@ public class Main implements Initializable {
 				}
 			}
 
-			avatar.setStrokeWidth(0);
+			//avatar.setStrokeWidth(0);
 			addEvents();
 		} else {
 			drawer.setPrefWidth(max);
 
-			drawer.getChildren().addAll(info, searchBox);
+			drawer.getChildren().addAll(searchBox, navigationHbox);
 			searchBox.toBack();
-			info.toBack();
-			avatar.toBack();
-			avatar.setStrokeWidth(2);
+			//info.toBack();
+			navigationHbox.toBack();
+			//avatar.toBack();
+			//avatar.setStrokeWidth(2);
 			for (Node node : views.getChildren()) {
 				if (node instanceof Button) {
 					((Button) node).setContentDisplay(ContentDisplay.LEFT);
@@ -356,20 +352,20 @@ public class Main implements Initializable {
 			}
 		}
 
-		for (Node node : ((VBox) controls.getContent()).getChildren()) {
-			controlsItems.add((Button) node);
-			items.add((Button) node);
-		}
+//		for (Node node : ((VBox) controls.getContent()).getChildren()) {
+//			controlsItems.add((Button) node);
+//			items.add((Button) node);
+//		}
 
-		for (Node node : ((VBox) design.getContent()).getChildren()) {
-			designItems.add((Button) node);
-			items.add((Button) node);
-		}
+//		for (Node node : ((VBox) design.getContent()).getChildren()) {
+//			designItems.add((Button) node);
+//			items.add((Button) node);
+//		}
 
-		for (Node node : ((VBox) charts.getContent()).getChildren()) {
-			chartsItems.add((Button) node);
-			items.add((Button) node);
-		}
+//		for (Node node : ((VBox) charts.getContent()).getChildren()) {
+//			chartsItems.add((Button) node);
+//			items.add((Button) node);
+//		}
 	}
 
 	private void loadContentPopup() {
@@ -404,6 +400,12 @@ public class Main implements Initializable {
 	private void clearText() {
 		search.clear();
 	}
+	
+	@FXML
+	private void dashboard() {
+		title.setText("Dashboard");
+		body.setContent(ViewManager.getInstance().get("dashboard"));
+	}
 
 	@FXML
 	private void productView() {
@@ -418,16 +420,22 @@ public class Main implements Initializable {
 	}
 	
 	@FXML
+	private void billView() {
+		title.setText("Bills");
+		body.setContent(ViewManager.getInstance().get("billView"));
+	}
+	
+	@FXML
 	private void buttons() {
 		body.setContent(ViewManager.getInstance().get("button"));
 		title.setText("Button");
 	}
 
-	@FXML
-	private void carousel() {
-		title.setText("Carousel");
-		body.setContent(ViewManager.getInstance().get("carousel"));
-	}
+//	@FXML
+//	private void carousel() {
+//		title.setText("Carousel");
+//		body.setContent(ViewManager.getInstance().get("carousel"));
+//	}
 
 	@FXML
 	private void toggle() {
@@ -435,17 +443,17 @@ public class Main implements Initializable {
 		body.setContent(ViewManager.getInstance().get("toggle"));
 	}
 
-	@FXML
-	private void cards() {
-		title.setText("Cards");
-		body.setContent(ViewManager.getInstance().get("cards"));
-	}
+//	@FXML
+//	private void cards() {
+//		title.setText("Cards");
+//		body.setContent(ViewManager.getInstance().get("cards"));
+//	}
 
-	@FXML
-	private void banners() {
-		title.setText("Banners");
-		body.setContent(ViewManager.getInstance().get("banners"));
-	}
+//	@FXML
+//	private void banners() {
+//		title.setText("Banners");
+//		body.setContent(ViewManager.getInstance().get("banners"));
+//	}
 
 	@FXML
 	private void textField() {
@@ -597,11 +605,6 @@ public class Main implements Initializable {
 		body.setContent(ViewManager.getInstance().get("scatterchart"));
 	}
 
-	@FXML
-	private void dashboard() {
-		title.setText("Dashboard");
-		body.setContent(ViewManager.getInstance().get("dashboard"));
-	}
 
 	@FXML
 	private void areaChart() {
@@ -657,23 +660,23 @@ public class Main implements Initializable {
 		body.setContent(ViewManager.getInstance().get("treeview"));
 	}
 
-	@FXML
-	private void animateButtons() {
-		title.setText("Animated Button");
-		body.setContent(ViewManager.getInstance().get("animated-button"));
-	}
+//	@FXML
+//	private void animateButtons() {
+//		title.setText("Animated Button");
+//		body.setContent(ViewManager.getInstance().get("animated-button"));
+//	}
 
-	@FXML
-	private void jfxTextField() {
-		title.setText("JFXTextField");
-		body.setContent(ViewManager.getInstance().get("jfx-text-field"));
-	}
+//	@FXML
+//	private void jfxTextField() {
+//		title.setText("JFXTextField");
+//		body.setContent(ViewManager.getInstance().get("jfx-text-field"));
+//	}
 
-	@FXML
-	private void alerts() {
-		title.setText("Alerts");
-		body.setContent(ViewManager.getInstance().get("alerts"));
-	}
+//	@FXML
+//	private void alerts() {
+//		title.setText("Alerts");
+//		body.setContent(ViewManager.getInstance().get("alerts"));
+//	}
 
 	private PopOver pop = new PopOver();
 
@@ -739,7 +742,7 @@ public class Main implements Initializable {
 			pop.setHeaderAlwaysVisible(false);
 			pop.setCornerRadius(0);
 			pop.setAutoFix(true);
-			pop.show(messages);
+			//pop.show(messages);
 
 		} else {
 			pop.hide();
@@ -807,7 +810,7 @@ public class Main implements Initializable {
 			pop.setCloseButtonEnabled(false);
 			pop.setHeaderAlwaysVisible(false);
 			pop.setCornerRadius(0);
-			pop.show(notifications);
+			//pop.show(notifications);
 
 		} else {
 			pop.hide();
