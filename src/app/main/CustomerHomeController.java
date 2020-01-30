@@ -3,140 +3,186 @@ package app.main;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
+import com.jfoenix.controls.JFXBadge;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXListView;
+import com.jfoenix.controls.JFXSnackbar;
+import com.jfoenix.controls.JFXSnackbarLayout;
+import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 
 import app.product.ProductEntity;
-import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.util.Callback;
+import javafx.util.Duration;
 
 public class CustomerHomeController implements Initializable {
-	
+
+	@FXML
+	private StackPane spRoot;
+
 	@FXML
 	private Tab productsTab;
-	
-//	@FXML
-//	private HBox productCard;
-	
-	@FXML
-	private FlowPane productFlowPane; 
-	
-	ObservableList<ProductEntity> productsObservableList = FXCollections.observableArrayList();
 
+	@FXML
+	private FlowPane productFlowPane;
+
+	@SuppressWarnings("rawtypes")
+	@FXML
+	private JFXListView productListView;
+	
+	JFXSnackbar snackbar;
+
+	@FXML
+	private JFXBadge cartBadge;
+
+	ObservableList<ProductEntity> productsObservableList = FXCollections.observableArrayList();
+	ObservableList<ProductEntity> cartProductsObservableList = FXCollections.observableArrayList();
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+
+		for (int i = 1; i <= 50; i++) {
+			productsObservableList.add(new ProductEntity(i, "productName " + i, "productDesc " + i, (double) i, 10.00));
+		}
+
+		productListView.getItems().addAll(productsObservableList);
+
+		productListView.setCellFactory(new Callback<ListView<ProductEntity>, ListCell<ProductEntity>>() {
+			@Override
+			public ListCell<ProductEntity> call(ListView<ProductEntity> param) {
+				return new XCell();
+			}
+		});
+
+		productListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue,
+					Boolean newPropertyValue) {
+				if (newPropertyValue) {
+					System.out.println("tableView on focus");
+				} else {
+					productListView.getSelectionModel().clearSelection();
+					System.out.println("tableView out focus");
+				}
+			}
+		});
 		
-		for (int i = 2; i <= 5; i++) {
-			
-			//productsObservableList.add(new ProductEntity(i, "Product "+i, "Product Desc "+i,(i+1.00), (i*10.5)));
-			//productCard
-			try {
-//				Button b = new Button("Button "+i);
-//				HBox hb = new HBox();
-//				hb.setFillHeight(false);
-//				//hb.getChildren().addAll(productCard.getChildren());
-//				Label l = new Label();
-//				l.getStyleClass().add("h3");
-//				l.setText("Product "+i);
-//				hb.getChildren().addAll(l);
-//				System.out.println("i:"+i);
-				productFlowPane.getChildren().add(FXMLLoader.load(getClass().getResource("productCard.fxml")));
-			} catch (Exception e) {
-				e.printStackTrace();
+		snackbar = new JFXSnackbar((Pane) spRoot);
+
+		// productListView.setPrefHeight(150.00);
+	}
+
+	class XCell extends ListCell<ProductEntity> {
+		HBox hbox = new HBox();
+		VBox vb = new VBox();
+		Label labelTitle = new Label();
+		Label labelDesc = new Label();
+		Label labelPrice = new Label();
+		Pane pane = new Pane();
+		JFXButton button = new JFXButton("+ Add To Cart");
+		String lastItem;
+
+		public XCell() {
+			super();
+			vb.getChildren().addAll(labelTitle, labelDesc, labelPrice);
+			button.getStyleClass().addAll("btn-secondary");
+			button.setMaxHeight(30);
+			pane.setMaxHeight(300);
+			hbox.getChildren().addAll(vb, pane, button);
+			hbox.setAlignment(Pos.CENTER_RIGHT);
+			HBox.setHgrow(pane, Priority.ALWAYS);
+			button.setOnAction(event -> {
+				System.out.println("click::" + event.getSource());
+				Object node = event.getSource();
+				System.out.println(node instanceof JFXButton);
+				JFXButton b = (JFXButton) node;
+				String itmId = null;
+				for (String i : b.getStyleClass()) {
+					if (i.startsWith("itmId")) {
+						itmId = i.substring(i.lastIndexOf("d") + 1, i.length());
+					}
+				}
+
+				int value = Integer.parseInt(cartBadge.getText());
+				value = value + 1;
+				if (value == 0) {
+					cartBadge.setEnabled(false);
+				} else {
+					cartBadge.setEnabled(true);
+				}
+				cartBadge.setText(String.valueOf(value));
+				// snackbar.fireEvent(new SnackbarEvent("Snackbar Message Persistent " +
+				// value));
+				// snackbar.fireEvent(new SnackbarEvent("Snackbar Message Persistent"));
+
+				for (ProductEntity productEntity : productsObservableList) {
+					if (productEntity.getId() == Integer.parseInt(itmId)) {
+						cartProductsObservableList.add(productEntity);
+						snackbar.close();
+						snackbar.setPrefWidth(300);
+						snackbar.fireEvent(new SnackbarEvent(
+								new JFXSnackbarLayout(productEntity.getProductName() + " is added to cart ", "CLOSE",
+										action -> snackbar.close()),
+								Duration.millis(5000), null));
+					}
+				}
+				System.out.println("cartBadge::" + cartBadge.getText());
+				System.out.println("btn itmId:" + itmId);
+
+			});
+		}
+
+		@Override
+		protected void updateItem(ProductEntity item, boolean empty) {
+			super.updateItem(item, empty);
+			setText(null); // No text in label of super class
+			System.out.println("item, empty::" + item + "," + empty);
+			if (empty) {
+				lastItem = null;
+				setGraphic(null);
+			} else {
+
+				hbox.prefHeight(400);
+				// labelTitle.setFont(Font.font(null, FontWeight.BOLD, 15));
+				// labelPrice.setFont(Font.font(null, FontWeight.BOLD, 12));
+				button.getStyleClass().add(item == null ? "" : "itmId" + item.getId());
+				lastItem = item.getProductName();
+				labelTitle.setText(item != null ? item.getProductName() : "");
+				labelDesc.setText(item != null ? item.getProductDesc() : "");
+				labelPrice.setText(item != null ? "$ " + String.valueOf(item.getPrice()) : "");
+				setStyle(" -fx-border-color : #ccc;-fx-border-width : 0 0 1 0;-fx-fixed-cell-size : 100px;");
+				setGraphic(hbox);
+				setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
 			}
 		}
-		
 	}
-	
-	private HBox createProductCard(String title, String desc, String price) {
-		HBox hb = new HBox();
-		hb.setFillHeight(false);
-		
-		VBox vb = new VBox();
-		vb.prefHeight(300.00);
-		vb.prefWidth(200.00);
-		vb.setStyle("-fx-border-color: -separator-color; -fx-background-color: -background-color;");
-		vb.getStyleClass().add("raised");
-		
-		
-		ImageView iv = new ImageView(new Image("@../../com/gn/module/media/foreground.jpg"));
-		iv.setFitHeight(272.00);
-		iv.setFitWidth(200.00);
-		iv.setPickOnBounds(true);
-		iv.setPreserveRatio(true);
-		vb.getChildren().add(iv);
-		
-		Label l = new Label(title);
-		l.getStyleClass().add("h3");
-		l.setPadding(new Insets(10.00, 0.0, 0.0, 10.00));
-		vb.getChildren().add(l);
-		
-		VBox vb1 = new VBox();
-		
-		Text t = new Text(desc);
-		t.setStyle("-fx-fill: -text-color");
-		TextFlow tf = new TextFlow();
-		tf.getChildren().add(t);
-		tf.setPadding(new Insets(10.00, 10.0, 10.0, 10.00));
-		vb1.getChildren().add(tf);
-		vb.getChildren().add(vb1);
-		
-		HBox hb1 = new HBox();
-		
-		
-		HBox hb2 = new HBox();
-		hb2.setAlignment(Pos.CENTER_RIGHT);
-		Label l1 = new Label("$ "+price);
-		l1.getStyleClass().add("h3");
-		hb2.getChildren().add(l1);
-		hb2.setPadding(new Insets(0.00, 0.0, 0.0, 5.00));
-		hb1.getChildren().add(hb2);
-		
-		HBox hb3 = new HBox();
-		hb3.setAlignment(Pos.CENTER_RIGHT);
-		
-		JFXButton btn = new JFXButton();
-		btn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-		btn.prefWidth(50.00);
-		btn.setRipplerFill(Paint.valueOf("BLACK"));
-		btn.getStyleClass().add("btn-transparent");
-		btn.getStyleClass().add("round");
-		btn.getStyleClass().add("btn-large");
-		
-		MaterialDesignIconView mdi = new MaterialDesignIconView();
-		mdi.setGlyphName("CART_PLUS");
-		mdi.setSize("35");
-		mdi.getStyleClass().add("btn-large");
-		
-		btn.setGraphic(mdi);
-		
-		hb3.getChildren().add(btn);
-		hb3.setPadding(new Insets(0.00, 5.0, 5.0, 0.00));
-		hb1.getChildren().add(hb3);
-		
-		vb.getChildren().add(hb1);
-		
-		vb.setPadding(new Insets(0.00, 5.0, 5.0, 0.00));
-		
-		hb.getChildren().add(vb);
-		return hb;
+
+	@FXML
+	public void openCart() {
+
 	}
 
 }

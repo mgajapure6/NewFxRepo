@@ -1470,41 +1470,41 @@
     -fx-background-radius : 0;
 }
 
-.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+/* .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
     -fx-background-color: white;
     -fx-padding: 1em 2em 1em 2em;
     -fx-font-family: Roboto ;
-}
+} */
 
-.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+/* .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
     -fx-background-color: -light-gray;
-}
+} */
 
-.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused {
+/* .list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused {
     -fx-background-insets: 0;
-}
+} */
 
-.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
+/* .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
     -fx-text-fill : white;
-}
+} */
 
-.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected:hover {
+/* .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected:hover {
     -fx-text-fill : -text-color;
-}
+} */
 
 
-.list-view > .text-field-list-cell .text-field
+/* .list-view > .text-field-list-cell .text-field
 {
  -fx-border-color : transparent transparent -box-fill transparent;
  -fx-border-width : 0 0 1 0;
-}
+} */
 
-.list-view .text-field-list-cell:selected .text-field
+/* .list-view .text-field-list-cell:selected .text-field
 {
  -fx-border-color : transparent transparent -base transparent;
  -fx-background-insets : 0px 0px 2px 0px;
  -fx-border-width : 0px 0px 2px 0px;
-}
+} */
 
 .hyperlink {
   -fx-underline : false;

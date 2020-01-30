@@ -23,9 +23,12 @@
 	<classpathentry kind="lib" path="lib/hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-validator-6.0.16.Final.jar"/>
 	<classpathentry kind="lib" path="lib/itextpdf-5.5.11.jar"/>
-	<classpathentry kind="lib" path="lib/jfoenix-8.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.39.jar"/>
 	<classpathentry kind="lib" path="lib/scenicView.jar"/>
 	<classpathentry kind="lib" path="lib/tilesfx-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/ui-basics-0.7.jar"/>
+	<classpathentry kind="lib" path="lib/ikonli-fontawesome5-pack-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/ikonli-javafx-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/jfoenix-0.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
