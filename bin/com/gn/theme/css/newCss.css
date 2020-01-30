@@ -1,0 +1,39 @@
+#productName, #cartProductName{
+	-fx-font-size: 16px !important;
+	-fx-font-weight : bold !important;
+	-fx-fill: #6b6b6b !important;
+}
+
+#productDesc, #cartProductDesc{
+	-fx-font-size: 14px !important;
+	-fx-fill: #797979 !important;
+}
+
+#productPrice, #cartProductPrice{
+	-fx-font-size: 16px !important;
+	-fx-font-family : Roboto Bold !important;
+	-fx-font-style : italic !important;
+	-fx-font-weight : bold !important;
+	-fx-fill: #6b6b6b !important;
+}
+
+.cart_title{
+	-fx-font-size: 16px !important;
+	-fx-font-weight : bold !important;
+	-fx-fill: #6b6b6b !important;
+}
+
+
+.jfx-snackbar-content {
+    -fx-background-color: #323232;
+    -fx-padding: 5;
+    -fx-spacing: 5;
+}
+
+.jfx-snackbar-toast {
+    -fx-text-fill: WHITE;
+}
+
+.jfx-snackbar-action {
+    -fx-text-fill: #ff4081;
+}
