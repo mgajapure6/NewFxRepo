@@ -106,7 +106,16 @@
 					<bottom>
 						<HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER_RIGHT">
 							<children>
-								<Button text="Buy Now" styleClass="btn-success" prefWidth="150.0">
+								<VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+									<children>
+										<Label fx:id="cartTotalAmt" text="\$ 120000.00">
+											<font>
+												<Font name="System Bold" size="26.0" />
+											</font>
+										</Label>
+									</children>
+								</VBox>
+								<Button fx:id="cartBuyNowBtn" prefWidth="150.0" styleClass="btn-success" text="Buy Now">
 									<font>
 										<Font name="System Bold" size="23.0" />
 									</font>

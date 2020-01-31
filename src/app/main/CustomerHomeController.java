@@ -4,45 +4,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.jfoenix.controls.JFXBadge;
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
-import com.jfoenix.controls.JFXListView;
-import com.jfoenix.controls.JFXSnackbar;
-import com.jfoenix.controls.JFXSnackbarLayout;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
+import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
+import com.jfoenix.controls.JFXSnackbarLayout;
 
 import app.product.ProductEntity;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
 import javafx.scene.control.Tab;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.util.Callback;
 import javafx.util.Duration;
 
 public class CustomerHomeController implements Initializable {
@@ -64,32 +53,31 @@ public class CustomerHomeController implements Initializable {
 
 	@FXML
 	private JFXDialog cartDialog;
-	
+
 	@FXML
 	private BorderPane cartListAppenderBorderPane;
-	
-	ObservableList<ProductEntity> productsObservableList = FXCollections.observableArrayList();
-	ObservableList<ProductEntity> cartProductsObservableList = FXCollections.observableArrayList();
+
+	@FXML
+	private Button cartBuyNowBtn;
+
+	@FXML
+	private Label cartTotalAmt;
+
 	ListView<ProductEntity> productListView = new ListView<>();
 	ListView<ProductEntity> cartListView = new ListView<>();
-	
+
 	JFXSnackbar snackbar;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		
-
 		for (int i = 1; i <= 50; i++) {
-			productsObservableList.add(new ProductEntity(i, "productName " + i, "productDesc " + i, (double) i, 10.00));
+			productListView.getItems()
+					.add(new ProductEntity(i, "productName " + i, "productDesc " + i, (double) i, 10.00));
 		}
 
-		productListView.getItems().addAll(productsObservableList);
-
-		cartListView.getItems().addAll(cartProductsObservableList);
-
 		productListView.setCellFactory(prodListView -> new ProductListViewCell());
-		
+
 		cartListView.setCellFactory(prodListView -> new CartListViewCell());
 
 		productListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -97,28 +85,25 @@ public class CustomerHomeController implements Initializable {
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue,
 					Boolean newPropertyValue) {
 				if (newPropertyValue) {
-					System.out.println("tableView on focus");
 				} else {
 					productListView.getSelectionModel().clearSelection();
-					System.out.println("tableView out focus");
 				}
 			}
 		});
-		
+
 		cartListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
 			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue,
 					Boolean newPropertyValue) {
 				if (newPropertyValue) {
-					System.out.println("tableView on focus");
 				} else {
 					cartListView.getSelectionModel().clearSelection();
-					System.out.println("tableView out focus");
 				}
 			}
 		});
 
 		VBox.setVgrow(productListView, Priority.ALWAYS);
+		VBox.setVgrow(cartListView, Priority.ALWAYS);
 		listAppenderVbox.getChildren().add(productListView);
 		cartListAppenderBorderPane.setCenter(cartListView);
 
@@ -132,8 +117,20 @@ public class CustomerHomeController implements Initializable {
 
 	@FXML
 	public void openCart() {
+		calculateCartValue();
 		cartDialog.setTransitionType(DialogTransition.CENTER);
 		cartDialog.show();
+	}
+
+	void calculateCartValue() {
+		Double totAmt = 0.0;
+		for (ProductEntity productEntity : cartListView.getItems()) {
+			Double itmsTotAmt = productEntity.getPrice() * productEntity.getQty();
+			System.out.println("itmsTotAmt: " + itmsTotAmt);
+			totAmt = totAmt + itmsTotAmt;
+		}
+		System.out.println("totAmt: " + totAmt);
+		cartTotalAmt.setText("$ " + String.valueOf(totAmt));
 	}
 
 	class ProductListViewCell extends ListCell<ProductEntity> {
@@ -167,94 +164,62 @@ public class CustomerHomeController implements Initializable {
 				if (mLLoader == null) {
 					mLLoader = new FXMLLoader(getClass().getResource("ProductListCell.fxml"));
 					mLLoader.setController(this);
-
 					try {
 						mLLoader.load();
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-
 				}
 
-				
-
 				addToCartBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getId());
+				addToCartBtn.getStyleClass().add(pe == null ? "" : "listItemIndex" + getIndex());
 
 				addToCartBtn.setOnAction(event -> {
-					Object node = event.getSource();
-					System.out.println(node instanceof Button);
-					Button b = (Button) node;
-					String itmId = null;
-					for (String i : b.getStyleClass()) {
-						if (i.startsWith("itmId")) {
-							itmId = i.substring(i.lastIndexOf("d") + 1, i.length());
-						}
-					}
-
-					int value = Integer.parseInt(cartBadge.getText());
-					value = value + 1;
-					if (value == 0) {
-						cartBadge.setEnabled(false);
-					} else {
-						cartBadge.setEnabled(true);
-					}
-					cartBadge.setText(String.valueOf(value));
-					cartProductsObservableList.add(pe);
+					pe.setQty(1.0);
 					cartListView.getItems().add(pe);
+					cartBadge.setText(String.valueOf(cartListView.getItems().size()));
+					JFXSnackbarLayout sbl = new JFXSnackbarLayout(pe.getProductName() + " is added to cart ");
 
-					for (ProductEntity productEntity : productsObservableList) {
-						if (productEntity.getId() == Integer.parseInt(itmId)) {
-							cartProductsObservableList.add(productEntity);
-							//snackbar.close();
-							JFXSnackbarLayout sbl = new JFXSnackbarLayout(productEntity.getProductName() + " is added to cart ");
-						
-							
-							snackbar.enqueue(new SnackbarEvent(
-									sbl,
-									Duration.millis(3000)));
-							//snackbar.fireEvent();
-						}
-					}
-					System.out.println("cartBadge::" + cartBadge.getText());
-					System.out.println("btn itmId:" + itmId);
+					snackbar.enqueue(new SnackbarEvent(sbl, Duration.millis(3000)));
 
 				});
 
 				productName.setText(String.valueOf(pe.getProductName()));
 				productDesc.setText(String.valueOf(pe.getProductDesc()));
 				productPrice.setText("$ " + pe.getPrice().toString());
-
-				// setText(null);
 				setGraphic(hboxProcudtListCell);
 			}
 
 		}
 
 	}
-	
+
 	class CartListViewCell extends ListCell<ProductEntity> {
 		@FXML
-	    private Label cartProductName;
+		private Label cartProductName;
 
-	    @FXML
-	    private Label cartProductDesc;
+		@FXML
+		private Label cartProductDesc;
 
-	    @FXML
-	    private Spinner<Double> cartProductQty;
+		@FXML
+		private Spinner<Double> cartProductQty;
 
-	    @FXML
-	    private Label cartProductUnitPrice;
+		@FXML
+		private Label cartProductUnitPrice;
 
-	    @FXML
-	    private Label cartProductTotAmt;
-		
-	    @FXML
-	    private Button removeCartItmBtn;
-	    
-	    @FXML
-	    private HBox hboxCartListCell;
+		@FXML
+		private Label cartProductTotAmt;
+
+		@FXML
+		private Button removeCartItmBtn;
+
+		@FXML
+		private HBox hboxCartListCell;
 
 		private FXMLLoader mLLoader;
+
+		DoubleSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1,
+				Double.MAX_VALUE, 1, 1);
 
 		@Override
 		protected void updateItem(ProductEntity pe, boolean empty) {
@@ -278,51 +243,47 @@ public class CustomerHomeController implements Initializable {
 
 				}
 
-				//cartProductsObservableList.add(pe);
+				cartProductQty.setValueFactory(spinnerValueFactory);
+				spinnerValueFactory.setValue(pe.getQty());
+				cartProductTotAmt.setText("$ "+String.valueOf((1 * pe.getPrice())));
 
+				cartProductQty.valueProperty().addListener((obs, oldValue, newValue) -> {
+					pe.setQty(newValue);
+					cartProductTotAmt.setText("$ "+pe.getQty() * pe.getPrice());
+					calculateCartValue();
+				});
+
+				removeCartItmBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getId());
+				removeCartItmBtn.getStyleClass().add(pe == null ? "" : "listItemIndex" + getIndex());
 
 				removeCartItmBtn.setOnAction(event -> {
-					Object node = event.getSource();
-					System.out.println(node instanceof Button);
-					Button b = (Button) node;
-					String itmId = null;
-					for (String i : b.getStyleClass()) {
-						if (i.startsWith("itmId")) {
-							itmId = i.substring(i.lastIndexOf("d") + 1, i.length());
-						}
-					}
 
-					int value = Integer.parseInt(cartBadge.getText());
-					value = value - 1;
-					if (value == 0) {
-						cartBadge.setEnabled(false);
+					cartListView.getItems().remove(getIndex());
+
+					cartBadge.setText(String.valueOf(cartListView.getItems().size()));
+
+					if (cartListView.getItems().size() <= 0) {
+						cartBuyNowBtn.setDisable(true);
 					} else {
-						cartBadge.setEnabled(true);
+						cartBuyNowBtn.setDisable(false);
 					}
-					cartBadge.setText(String.valueOf(value));
 
-					for (ProductEntity productEntity : productsObservableList) {
-						if (productEntity.getId() == Integer.parseInt(itmId)) {
-							cartProductsObservableList.add(productEntity);
-							snackbar.close();
-							snackbar.setPrefWidth(300);
-							snackbar.fireEvent(new SnackbarEvent(
-									new JFXSnackbarLayout(productEntity.getProductName() + " is remove from cart ",
-											"CLOSE", action -> snackbar.close()),
-									Duration.millis(5000), null));
-						}
-					}
-					System.out.println("cartBadge::" + cartBadge.getText());
-					System.out.println("btn itmId:" + itmId);
+					calculateCartValue();
 
+					snackbar.fireEvent(
+							new SnackbarEvent(new JFXSnackbarLayout(pe.getProductName() + " is remove from cart ",
+									"CLOSE", action -> snackbar.close()), Duration.millis(2000), null));
 				});
+				
+				if (cartListView.getItems().size() <= 0) {
+					cartBuyNowBtn.setDisable(true);
+				} else {
+					cartBuyNowBtn.setDisable(false);
+				}
 
 				cartProductName.setText(String.valueOf(pe.getProductName()));
 				cartProductDesc.setText(String.valueOf(pe.getProductDesc()));
 				cartProductUnitPrice.setText("$ " + pe.getPrice().toString());
-
-
-				// setText(null);
 				setGraphic(hboxCartListCell);
 			}
 
