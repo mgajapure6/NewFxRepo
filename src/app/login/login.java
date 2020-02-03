@@ -20,11 +20,11 @@ import animatefx.animation.Flash;
 import animatefx.animation.Pulse;
 import animatefx.animation.SlideInLeft;
 import app.App;
+import app.db.dao.UserDao;
+import app.db.domain.User;
 import app.global.Section;
 import app.global.SectionManager;
-import app.global.User;
 import app.global.UserDetail;
-import app.global.UserManager;
 import app.global.ViewManager;
 import app.main.Main;
 
@@ -156,16 +156,17 @@ public class login implements Initializable {
 			enter();
 		else {
 			lbl_password.setVisible(true);
-			lbl_username.setVisible(true);
+			lbl_username.setVisible(true); 
 		}
 	}
 
 	private void enter() {
+		UserDao userDao = new UserDao();
+		User user = userDao.getByUsernameAndPassword(this.username.getText(), this.password.getText());
+		System.out.println("dbuser::" + user);
 
-		User user = UserManager.get(username.getText());
-		System.out.println("user::"+user);
-
-		if (user.getUserName().equals(this.username.getText()) && user.getPassword().equals(this.password.getText())) {
+		if (user.getUserName().equals(this.username.getText())
+				&& user.getUserPassword().equals(this.password.getText())) {
 			Section section = new Section();
 			section.setLogged(true);
 			section.setUserLogged(this.username.getText());
@@ -174,15 +175,16 @@ public class login implements Initializable {
 			App.decorator.setContent(ViewManager.getInstance().get("main"));
 
 			UserDetail detail = App.getUserDetail();
-			detail.setText(user.getFullName());
+			detail.setText(
+					user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());
 			detail.setHeader(user.getUserName());
 
 			App.decorator.addCustom(App.getUserDetail());
 
 			App.getUserDetail().setProfileAction(event -> {
 				App.getUserDetail().getPopOver().hide();
-				//Main.ctrl.title.setText("Profile");
-				//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+				// Main.ctrl.title.setText("Profile");
+				// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
 			});
 
 			App.getUserDetail().setSignAction(event -> {

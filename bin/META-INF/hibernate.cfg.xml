@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+
+<hibernate-configuration>
+    <session-factory>
+        
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver </property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/mmcstore?autoReconnect=true&amp;useUnicode=true&amp;createDatabaseIfNotExist=true&amp;characterEncoding=utf-8</property>
+        <property name="hibernate.connection.user">root </property>
+        <property name="hibernate.connection.password"/> 
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        <property name="hibernate.connection.CharSet">utf8</property>
+        <property name="hibernate.connection.CharacterEncoding">utf8</property>
+        <property name="hibernate.connection.useUnicode">true</property>
+        <property name="hibernate.connection.pool_size">1</property>
+        
+        <mapping class="app.db.domain.Customer"/>
+        <mapping class="app.db.domain.Provider"/>
+        <mapping class="app.db.domain.User"/>
+        <mapping class="app.db.domain.Bill"/>
+        <mapping class="app.db.domain.Product"/>
+    </session-factory>
+</hibernate-configuration>

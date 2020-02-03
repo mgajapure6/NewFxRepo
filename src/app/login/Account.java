@@ -18,12 +18,14 @@ package app.login;
 
 import animatefx.animation.*;
 import app.App;
+import app.db.dao.UserDao;
+import app.db.domain.Customer;
+import app.db.domain.Provider;
+import app.db.domain.User;
 import app.global.Mask;
 import app.global.Section;
 import app.global.SectionManager;
-import app.global.User;
 import app.global.UserDetail;
-import app.global.UserManager;
 import app.global.ViewManager;
 import app.main.Main;
 
@@ -33,6 +35,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -41,6 +44,7 @@ import javafx.util.Duration;
 
 import java.io.*;
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class Account implements Initializable {
@@ -81,6 +85,9 @@ public class Account implements Initializable {
 	@FXML
 	private Button register;
 
+	@FXML
+	private ComboBox<String> accType;
+
 	private RotateTransition rotateTransition = new RotateTransition();
 
 	@Override
@@ -100,6 +107,8 @@ public class Account implements Initializable {
 		Mask.noInitSpace(username);
 		Mask.noSpaces(username);
 		setupListeners();
+
+		accType.setValue("Customer");
 	}
 
 	@FXML
@@ -141,19 +150,34 @@ public class Account implements Initializable {
 
 		Section section = new Section(true, username.getText());
 		SectionManager.save(section);
+		Boolean isCustomer = false;
+		Customer customer = new Customer();
+		Provider provider = new Provider();
+		if (accType.getValue().equals("Customer")) {
+			isCustomer = true;
+			provider = null;
+			customer = new Customer(null, fullname.getText(), null, null, null);
+		} else {
+			isCustomer = false;
+			provider = new Provider(null, fullname.getText());
+			customer = null;
+		}
 
-		User user = new User(username.getText(), fullname.getText(), email.getText(), password.getText());
-		UserManager.save(user);
+		User user = new User(null, username.getText(), password.getText(), isCustomer, !isCustomer, null, null,
+				"Active", email.getText(), new Date());
+
+		UserDao userDao = new UserDao();
+		userDao.saveUser(user, customer, provider);
 
 		UserDetail detail = App.getUserDetail();
-		detail.setText(user.getFullName());
+		detail.setText(isCustomer ? customer.getCustomerName() : provider.getProviderName());
 		detail.setHeader(user.getUserName());
 
 		App.decorator.addCustom(detail);
 		detail.setProfileAction(event -> {
 			App.getUserDetail().getPopOver().hide();
-			//Main.ctrl.title.setText("Profile");
-			//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+			// Main.ctrl.title.setText("Profile");
+			// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
 
 		});
 

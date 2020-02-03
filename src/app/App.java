@@ -10,11 +10,11 @@ import com.gn.decorator.GNDecorator;
 import com.gn.decorator.options.ButtonType;
 import com.sun.javafx.application.LauncherImpl;
 
+import app.db.dao.UserDao;
+import app.db.domain.User;
 import app.global.Section;
 import app.global.SectionManager;
-import app.global.User;
 import app.global.UserDetail;
-import app.global.UserManager;
 import app.global.ViewManager;
 import app.loader.Loader;
 import app.main.Main;
@@ -53,10 +53,18 @@ public class App extends Application {
 	@Override
 	public synchronized void init() {
 		section = SectionManager.get();
-
+		UserDao userDao = new UserDao();
 		if (section.isLogged()) {
-			user = UserManager.get(section.getUserLogged());
-			userDetail = new UserDetail(section.getUserLogged(), user.getFullName(), "subtitle");
+			user = userDao.getByUsername(section.getUserLogged());
+			if (user != null) {
+				userDetail = new UserDetail(section.getUserLogged(),
+						user.getIsCustomer() ? user.getCustomer().getCustomerName()
+								: user.getProvider().getProviderName(),
+						"subtitle");
+			} else {
+				userDetail = new UserDetail();
+			}
+
 		} else {
 			userDetail = new UserDetail();
 		}
@@ -107,36 +115,36 @@ public class App extends Application {
 		decorator.initTheme(GNDecorator.Theme.CUSTOM);
 //        decorator.fullBody();
 
-		String log = logged();
-		assert log != null;
+//		String log = logged();
+//		assert log != null;
 
-		if (log.equals("account") || log.equals("login")) {
-			System.out.println("initialScene if");
-			decorator.setContent(ViewManager.getInstance().get(log));
-		} else {
-			System.out.println("initialScene else");
-			App.decorator.addCustom(userDetail);
-			userDetail.setProfileAction(event -> {
-				//Main.ctrl.title.setText("Profile");
-				//Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
-				userDetail.getPopOver().hide();
-			});
+		decorator.setContent(ViewManager.getInstance().get("login"));
 
-			userDetail.setSignAction(event -> {
-				App.decorator.setContent(ViewManager.getInstance().get("login"));
-				section.setLogged(false);
-				SectionManager.save(section);
-				userDetail.getPopOver().hide();
-				if (Main.popConfig.isShowing())
-					Main.popConfig.hide();
-				if (Main.popup.isShowing())
-					Main.popup.hide();
-				App.decorator.removeCustom(userDetail);
-			});
-			
-			
-			decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
-		}
+//		if (log.equals("account") || log.equals("login")) {
+//			decorator.setContent(ViewManager.getInstance().get(log));
+//		} else {
+//			System.out.println("initialScene else");
+//			App.decorator.addCustom(userDetail);
+//			userDetail.setProfileAction(event -> {
+//				// Main.ctrl.title.setText("Profile");
+//				// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+//				userDetail.getPopOver().hide();
+//			});
+//
+//			userDetail.setSignAction(event -> {
+//				App.decorator.setContent(ViewManager.getInstance().get("login"));
+//				section.setLogged(false);
+//				SectionManager.save(section);
+//				userDetail.getPopOver().hide();
+//				if (Main.popConfig.isShowing())
+//					Main.popConfig.hide();
+//				if (Main.popup.isShowing())
+//					Main.popup.hide();
+//				App.decorator.removeCustom(userDetail);
+//			});
+//
+//			decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
+//		}
 
 		decorator.getStage().setOnCloseRequest(event -> {
 			App.getUserDetail().getPopOver().hide();
