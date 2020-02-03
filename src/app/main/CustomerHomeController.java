@@ -2,6 +2,7 @@ package app.main;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXBadge;
@@ -11,6 +12,11 @@ import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 import com.jfoenix.controls.JFXSnackbarLayout;
 
+import app.App;
+import app.db.dao.ProductDao;
+import app.db.domain.Product;
+import app.db.domain.ProviderProduct;
+import app.db.domain.User;
 import app.product.ProductEntity;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,6 +30,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
+import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -63,18 +70,30 @@ public class CustomerHomeController implements Initializable {
 	@FXML
 	private Label cartTotalAmt;
 
-	ListView<ProductEntity> productListView = new ListView<>();
-	ListView<ProductEntity> cartListView = new ListView<>();
+	@FXML
+	private Button placeOrderBtn;
+	
+	User loggedUser = App.getUserDetail().getLoggedUser();
+
+	ListView<ProviderProduct> productListView = new ListView<>();
+	ListView<ProviderProduct> cartListView = new ListView<>();
 
 	JFXSnackbar snackbar;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		for (int i = 1; i <= 50; i++) {
-			productListView.getItems()
-					.add(new ProductEntity(i, "productName " + i, "productDesc " + i, (double) i, 10.00));
+		ProductDao productDao = new ProductDao();
+		List<ProviderProduct> providerProducts = productDao.getAllProviderProducts();
+
+		for (ProviderProduct providerProduct : providerProducts) {
+			productListView.getItems().add(providerProduct);
 		}
+
+//		for (int i = 1; i <= 50; i++) {
+//			productListView.getItems()
+//					.add(new ProductEntity(i, "productName " + i, "productDesc " + i, (double) i, 10.00));
+//		}
 
 		productListView.setCellFactory(prodListView -> new ProductListViewCell());
 
@@ -113,6 +132,10 @@ public class CustomerHomeController implements Initializable {
 		cartDialog.setDialogContainer(spRoot);
 		cartDialog.prefWidth(700);
 
+		placeOrderBtn.setOnAction(event -> {
+
+		});
+
 	}
 
 	@FXML
@@ -124,8 +147,8 @@ public class CustomerHomeController implements Initializable {
 
 	void calculateCartValue() {
 		Double totAmt = 0.0;
-		for (ProductEntity productEntity : cartListView.getItems()) {
-			Double itmsTotAmt = productEntity.getPrice() * productEntity.getQty();
+		for (ProviderProduct providerProduct : cartListView.getItems()) {
+			Double itmsTotAmt = providerProduct.getProduct().getPrice() * providerProduct.getQtyAvailable();
 			System.out.println("itmsTotAmt: " + itmsTotAmt);
 			totAmt = totAmt + itmsTotAmt;
 		}
@@ -133,7 +156,7 @@ public class CustomerHomeController implements Initializable {
 		cartTotalAmt.setText("$ " + String.valueOf(totAmt));
 	}
 
-	class ProductListViewCell extends ListCell<ProductEntity> {
+	class ProductListViewCell extends ListCell<ProviderProduct> {
 		@FXML
 		private Label productName;
 
@@ -152,7 +175,7 @@ public class CustomerHomeController implements Initializable {
 		private FXMLLoader mLLoader;
 
 		@Override
-		protected void updateItem(ProductEntity pe, boolean empty) {
+		protected void updateItem(ProviderProduct pe, boolean empty) {
 			super.updateItem(pe, empty);
 
 			if (empty || pe == null) {
@@ -171,22 +194,23 @@ public class CustomerHomeController implements Initializable {
 					}
 				}
 
-				addToCartBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getId());
+				addToCartBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getProduct().getProductId());
 				addToCartBtn.getStyleClass().add(pe == null ? "" : "listItemIndex" + getIndex());
 
 				addToCartBtn.setOnAction(event -> {
-					pe.setQty(1.0);
+					pe.setQtyAvailable(1);
 					cartListView.getItems().add(pe);
 					cartBadge.setText(String.valueOf(cartListView.getItems().size()));
-					JFXSnackbarLayout sbl = new JFXSnackbarLayout(pe.getProductName() + " is added to cart ");
+					JFXSnackbarLayout sbl = new JFXSnackbarLayout(
+							pe.getProduct().getProductName() + " is added to cart ");
 
 					snackbar.enqueue(new SnackbarEvent(sbl, Duration.millis(3000)));
 
 				});
 
-				productName.setText(String.valueOf(pe.getProductName()));
-				productDesc.setText(String.valueOf(pe.getProductDesc()));
-				productPrice.setText("$ " + pe.getPrice().toString());
+				productName.setText(String.valueOf(pe.getProduct().getProductName()));
+				productDesc.setText(String.valueOf(pe.getProduct().getDescription()));
+				productPrice.setText("$ " + pe.getProduct().getPrice().toString());
 				setGraphic(hboxProcudtListCell);
 			}
 
@@ -194,7 +218,7 @@ public class CustomerHomeController implements Initializable {
 
 	}
 
-	class CartListViewCell extends ListCell<ProductEntity> {
+	class CartListViewCell extends ListCell<ProviderProduct> {
 		@FXML
 		private Label cartProductName;
 
@@ -202,7 +226,7 @@ public class CustomerHomeController implements Initializable {
 		private Label cartProductDesc;
 
 		@FXML
-		private Spinner<Double> cartProductQty;
+		private Spinner<Integer> cartProductQty;
 
 		@FXML
 		private Label cartProductUnitPrice;
@@ -218,11 +242,11 @@ public class CustomerHomeController implements Initializable {
 
 		private FXMLLoader mLLoader;
 
-		DoubleSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1,
-				Double.MAX_VALUE, 1, 1);
+		IntegerSpinnerValueFactory spinnerValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,
+				Integer.MAX_VALUE, 1, 1);
 
 		@Override
-		protected void updateItem(ProductEntity pe, boolean empty) {
+		protected void updateItem(ProviderProduct pe, boolean empty) {
 			super.updateItem(pe, empty);
 
 			if (empty || pe == null) {
@@ -244,16 +268,16 @@ public class CustomerHomeController implements Initializable {
 				}
 
 				cartProductQty.setValueFactory(spinnerValueFactory);
-				spinnerValueFactory.setValue(pe.getQty());
-				cartProductTotAmt.setText("$ "+String.valueOf((1 * pe.getPrice())));
+				spinnerValueFactory.setValue(pe.getQtyAvailable());
+				cartProductTotAmt.setText("$ " + String.valueOf((1 * pe.getProduct().getPrice())));
 
 				cartProductQty.valueProperty().addListener((obs, oldValue, newValue) -> {
-					pe.setQty(newValue);
-					cartProductTotAmt.setText("$ "+pe.getQty() * pe.getPrice());
+					pe.setQtyAvailable(newValue);
+					cartProductTotAmt.setText("$ " + newValue * pe.getProduct().getPrice());
 					calculateCartValue();
 				});
 
-				removeCartItmBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getId());
+				removeCartItmBtn.getStyleClass().add(pe == null ? "" : "itmId" + pe.getProduct().getProductId());
 				removeCartItmBtn.getStyleClass().add(pe == null ? "" : "listItemIndex" + getIndex());
 
 				removeCartItmBtn.setOnAction(event -> {
@@ -270,20 +294,21 @@ public class CustomerHomeController implements Initializable {
 
 					calculateCartValue();
 
-					snackbar.fireEvent(
-							new SnackbarEvent(new JFXSnackbarLayout(pe.getProductName() + " is remove from cart ",
-									"CLOSE", action -> snackbar.close()), Duration.millis(2000), null));
+					snackbar.fireEvent(new SnackbarEvent(
+							new JFXSnackbarLayout(pe.getProduct().getProductName() + " is remove from cart ", "CLOSE",
+									action -> snackbar.close()),
+							Duration.millis(2000), null));
 				});
-				
+
 				if (cartListView.getItems().size() <= 0) {
 					cartBuyNowBtn.setDisable(true);
 				} else {
 					cartBuyNowBtn.setDisable(false);
 				}
 
-				cartProductName.setText(String.valueOf(pe.getProductName()));
-				cartProductDesc.setText(String.valueOf(pe.getProductDesc()));
-				cartProductUnitPrice.setText("$ " + pe.getPrice().toString());
+				cartProductName.setText(String.valueOf(pe.getProduct().getProductName()));
+				cartProductDesc.setText(String.valueOf(pe.getProduct().getDescription()));
+				cartProductUnitPrice.setText("$ " + pe.getProduct().getPrice().toString());
 				setGraphic(hboxCartListCell);
 			}
 

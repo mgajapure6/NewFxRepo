@@ -81,36 +81,23 @@
 				</Label>
 			</heading>
 			<body>
-				<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="30" alignment="CENTER">
+				<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="10" alignment="CENTER">
 					<children>
 						<JFXTextField fx:id="productNameField" promptText="Product Name" labelFloat="true" style="-fx-background-color:#eeeeee">
-							<validators>
-								<RequiredFieldValidator message="Input Required!">
-									<!-- <FontIcon iconLiteral="fas-exclamation-triangle" /> -->
-								</RequiredFieldValidator>
-							</validators>
+							
 						</JFXTextField>
+						<Label fx:id="lbl_pname_err" styleClass="text-danger" text="Product Name Required" />
 						<JFXTextArea fx:id="productDescField" promptText="Product Description" labelFloat="true" maxHeight="50" minHeight="50" style="-fx-background-color:#eeeeee">
-							<validators>
-								<RequiredFieldValidator message="Please describe about product.">
-									<!-- <FontIcon iconLiteral="fas-exclamation-triangle" /> -->
-								</RequiredFieldValidator>
-							</validators>
+							
 						</JFXTextArea>
 						<JFXTextField fx:id="productQtyField" promptText="Available Quantity" labelFloat="true" style="-fx-background-color:#eeeeee">
-							<validators>
-								<RequiredFieldValidator message="Input Required!">
-									<!-- <FontIcon iconLiteral="fas-exclamation-triangle" /> -->
-								</RequiredFieldValidator>
-							</validators>
+							
 						</JFXTextField>
+						<Label fx:id="lbl_pqty_err" styleClass="text-danger" text="Product Quantity Required" />
 						<JFXTextField fx:id="productPriceField" promptText="Product Price" labelFloat="true" style="-fx-background-color:#eeeeee">
-							<validators>
-								<RequiredFieldValidator message="Input Required!">
-									<!-- <FontIcon iconLiteral="fas-exclamation-triangle" /> -->
-								</RequiredFieldValidator>
-							</validators>
+							
 						</JFXTextField>
+						<Label fx:id="lbl_pprice_err" styleClass="text-danger" text="Product Price Required" />
 						<JFXButton fx:id="saveProductButton" styleClass="dialog-accept">Save Product
 						</JFXButton>
 					</children>

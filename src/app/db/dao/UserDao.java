@@ -30,23 +30,31 @@ public class UserDao {
 
 		session.saveOrUpdate(user);
 		session.getTransaction().commit();
-
+		session.close();
 		return true;
 
 	}
 
 	public User getByUsername(String username) {
-		Criteria criteria = HibernateUtil.getSessionFactory().getCurrentSession().createCriteria(User.class);
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		Criteria criteria = session.createCriteria(User.class);
 		criteria.add(Restrictions.eq("userName", username));
 		User user = (User) criteria.uniqueResult();
+		session.getTransaction().commit();
+		session.close();
 		return user;
 	}
 
 	public User getByUsernameAndPassword(String username, String password) {
-		Criteria criteria = HibernateUtil.getSessionFactory().getCurrentSession().createCriteria(User.class);
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+		Criteria criteria = session.createCriteria(User.class);
 		criteria.add(Restrictions.eq("userName", username));
 		criteria.add(Restrictions.eq("userPassword", password));
 		User user = (User) criteria.uniqueResult();
+		session.getTransaction().commit();
+		session.close();
 		return user;
 	}
 

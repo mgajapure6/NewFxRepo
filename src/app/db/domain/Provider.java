@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Provider")
+@Table
 public class Provider {
 
 	@Id
@@ -29,16 +29,6 @@ public class Provider {
 
 	@OneToMany(mappedBy = "provider")
 	private Set<ProviderProduct> providerProducts;
-
-	public Provider(Integer providerId, String providerName) {
-		super();
-		this.providerId = providerId;
-		this.providerName = providerName;
-	}
-
-	public Provider() {
-		super();
-	}
 
 	public Integer getProviderId() {
 		return providerId;
@@ -64,10 +54,29 @@ public class Provider {
 		this.user = user;
 	}
 
+	public Set<ProviderProduct> getProviderProducts() {
+		return providerProducts;
+	}
+
+	public void setProviderProducts(Set<ProviderProduct> providerProducts) {
+		this.providerProducts = providerProducts;
+	}
+
+	public Provider(Integer providerId, String providerName, User user, Set<ProviderProduct> providerProducts) {
+		super();
+		this.providerId = providerId;
+		this.providerName = providerName;
+		this.user = user;
+		this.providerProducts = providerProducts;
+	}
+
+	public Provider() {
+		super();
+	}
+
 	@Override
 	public String toString() {
-		return "Provider [providerId=" + providerId + ", providerName=" + providerName + ", user=" + user
-				+ ", providerProducts=" + providerProducts + "]";
+		return "Provider [providerId=" + providerId + ", providerName=" + providerName + "]";
 	}
 
 }

@@ -1,6 +1,12 @@
 
 package app.main;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import org.controlsfx.control.PopOver;
+
 import com.gn.GNAvatarView;
 import com.jfoenix.controls.JFXBadge;
 import com.jfoenix.controls.JFXButton;
@@ -9,8 +15,6 @@ import com.jfoenix.controls.JFXDialogLayout;
 
 import app.global.AlertCell;
 import app.global.ViewManager;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -25,16 +29,24 @@ import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import org.controlsfx.control.PopOver;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class Main implements Initializable {
 
@@ -408,9 +420,10 @@ public class Main implements Initializable {
 	}
 
 	@FXML
-	private void productView() {
+	private void productView() throws IOException {
 		title.setText("Products");
-		body.setContent(ViewManager.getInstance().get("productView"));
+		body.setContent(FXMLLoader.load(getClass().getResource("/app/product/productView.fxml")));
+		//body.setContent(ViewManager.getInstance().get("productView"));
 	}
 	
 	@FXML

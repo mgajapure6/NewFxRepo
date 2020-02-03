@@ -30,20 +30,6 @@ public class Product {
 	@OneToMany(mappedBy = "product")
 	private Set<ProviderProduct> providerProducts;
 
-	public Product(Integer productId, String productName, String description, Double price,
-			Set<ProviderProduct> providerProducts) {
-		super();
-		this.productId = productId;
-		this.productName = productName;
-		this.description = description;
-		this.price = price;
-		this.providerProducts = providerProducts;
-	}
-
-	public Product() {
-		super();
-	}
-
 	public Integer getProductId() {
 		return productId;
 	}
@@ -82,6 +68,26 @@ public class Product {
 
 	public void setProviderProducts(Set<ProviderProduct> providerProducts) {
 		this.providerProducts = providerProducts;
+	}
+
+	public Product(Integer productId, String productName, String description, Double price,
+			Set<ProviderProduct> providerProducts) {
+		super();
+		this.productId = productId;
+		this.productName = productName;
+		this.description = description;
+		this.price = price;
+		this.providerProducts = providerProducts;
+	}
+
+	public Product() {
+		super();
+	}
+
+	@Override
+	public String toString() {
+		return "Product [productId=" + productId + ", productName=" + productName + ", description=" + description
+				+ ", price=" + price + "]";
 	}
 
 }

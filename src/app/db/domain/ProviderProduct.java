@@ -2,6 +2,7 @@ package app.db.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,7 +18,7 @@ public class ProviderProduct {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer providerProductId;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "providerId", nullable = false)
 	private Provider provider;
 
@@ -70,6 +71,12 @@ public class ProviderProduct {
 
 	public ProviderProduct() {
 		super();
+	}
+
+	@Override
+	public String toString() {
+		return "ProviderProduct [providerProductId=" + providerProductId + ", provider=" + provider + ", product="
+				+ product + ", qtyAvailable=" + qtyAvailable + "]";
 	}
 
 }

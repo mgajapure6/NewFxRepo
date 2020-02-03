@@ -19,13 +19,13 @@ public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer customerId;
-	
+
 	@Column(length = 100)
 	private String customerName;
-	
+
 	@Column(length = 255)
 	private String address;
-	
+
 	@OneToOne
 	@JoinColumn(name = "customerId")
 	private User user;
@@ -88,10 +88,7 @@ public class Customer {
 
 	@Override
 	public String toString() {
-		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", address=" + address
-				+ ", user=" + user + ", bills=" + bills + "]";
+		return "Customer [customerId=" + customerId + ", customerName=" + customerName + ", address=" + address + "]";
 	}
-	
-	
 
 }

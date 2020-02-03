@@ -19,17 +19,17 @@ public class Bill {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer billId;
-	
+
 	@Column(length = 100)
 	private Date billDate;
-	
+
 	@Column(length = 100)
 	private Boolean isPaid;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "customerId", nullable = false)
 	private Customer customer;
-	
+
 	@OneToMany(mappedBy = "bill")
 	private Set<BillProviderProduct> billProviderProducts;
 
@@ -65,6 +65,14 @@ public class Bill {
 		this.customer = customer;
 	}
 
+	public Set<BillProviderProduct> getBillProviderProducts() {
+		return billProviderProducts;
+	}
+
+	public void setBillProviderProducts(Set<BillProviderProduct> billProviderProducts) {
+		this.billProviderProducts = billProviderProducts;
+	}
+
 	public Bill(Integer billId, Date billDate, Boolean isPaid, Customer customer,
 			Set<BillProviderProduct> billProviderProducts) {
 		super();
@@ -77,14 +85,6 @@ public class Bill {
 
 	public Bill() {
 		super();
-	}
-
-	public Set<BillProviderProduct> getBillProviderProducts() {
-		return billProviderProducts;
-	}
-
-	public void setBillProviderProducts(Set<BillProviderProduct> billProviderProducts) {
-		this.billProviderProducts = billProviderProducts;
 	}
 
 }

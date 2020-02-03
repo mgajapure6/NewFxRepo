@@ -35,5 +35,9 @@
 	<classpathentry kind="lib" path="lib/jfoenix-8.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/jmetro-5.3.jar"/>
 	<classpathentry kind="lib" path="lib/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-2.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.5.jar"/>
+	<classpathentry kind="lib" path="lib/joda-time-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -12,6 +12,7 @@ import com.sun.javafx.application.LauncherImpl;
 
 import app.db.dao.UserDao;
 import app.db.domain.User;
+import app.db.util.HibernateUtil;
 import app.global.Section;
 import app.global.SectionManager;
 import app.global.UserDetail;
@@ -52,15 +53,13 @@ public class App extends Application {
 
 	@Override
 	public synchronized void init() {
+		HibernateUtil.getSessionFactory().openSession().close();
 		section = SectionManager.get();
 		UserDao userDao = new UserDao();
 		if (section.isLogged()) {
 			user = userDao.getByUsername(section.getUserLogged());
 			if (user != null) {
-				userDetail = new UserDetail(section.getUserLogged(),
-						user.getIsCustomer() ? user.getCustomer().getCustomerName()
-								: user.getProvider().getProviderName(),
-						"subtitle");
+				userDetail = new UserDetail(user);
 			} else {
 				userDetail = new UserDetail();
 			}

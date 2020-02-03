@@ -36,25 +36,6 @@ public class User {
 	@Column(length = 100)
 	private Date registerDate;
 
-	public User(Integer userId, String userName, String userPassword, Boolean isCustomer, Boolean isProvider,
-			Customer customer, Provider provider, String status, String email, Date registerDate) {
-		super();
-		this.userId = userId;
-		this.userName = userName;
-		this.userPassword = userPassword;
-		this.isCustomer = isCustomer;
-		this.isProvider = isProvider;
-		this.customer = customer;
-		this.provider = provider;
-		this.status = status;
-		this.email = email;
-		this.registerDate = registerDate;
-	}
-
-	public User() {
-		super();
-	}
-
 	public Integer getUserId() {
 		return userId;
 	}
@@ -133,6 +114,25 @@ public class User {
 
 	public void setRegisterDate(Date registerDate) {
 		this.registerDate = registerDate;
+	}
+
+	public User(Integer userId, String userName, String userPassword, Boolean isCustomer, Boolean isProvider,
+			Customer customer, Provider provider, String status, String email, Date registerDate) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.userPassword = userPassword;
+		this.isCustomer = isCustomer;
+		this.isProvider = isProvider;
+		this.customer = customer;
+		this.provider = provider;
+		this.status = status;
+		this.email = email;
+		this.registerDate = registerDate;
+	}
+
+	public User() {
+		super();
 	}
 
 	@Override

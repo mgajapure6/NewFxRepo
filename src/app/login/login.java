@@ -162,18 +162,25 @@ public class login implements Initializable {
 
 	private void enter() {
 		UserDao userDao = new UserDao();
+		System.out.println("userDao start");
 		User user = userDao.getByUsernameAndPassword(this.username.getText(), this.password.getText());
+		System.out.println("userDao end");
 		System.out.println("dbuser::" + user);
 
-		if (user.getUserName().equals(this.username.getText())
+		if (user !=null && user.getUserName().equals(this.username.getText())
 				&& user.getUserPassword().equals(this.password.getText())) {
 			Section section = new Section();
 			section.setLogged(true);
 			section.setUserLogged(this.username.getText());
 			SectionManager.save(section);
-
-			App.decorator.setContent(ViewManager.getInstance().get("main"));
-
+			if (user.getIsCustomer()) {
+				App.decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
+			} else {
+				App.decorator.setContent(ViewManager.getInstance().get("main"));
+			}
+			
+			App.decorator.setBarHeight(40);
+			
 			UserDetail detail = App.getUserDetail();
 			detail.setText(
 					user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());
@@ -181,11 +188,11 @@ public class login implements Initializable {
 
 			App.decorator.addCustom(App.getUserDetail());
 
-			App.getUserDetail().setProfileAction(event -> {
-				App.getUserDetail().getPopOver().hide();
-				// Main.ctrl.title.setText("Profile");
-				// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
-			});
+//			App.getUserDetail().setProfileAction(event -> {
+//				App.getUserDetail().getPopOver().hide();
+//				// Main.ctrl.title.setText("Profile");
+//				// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+//			});
 
 			App.getUserDetail().setSignAction(event -> {
 				App.getUserDetail().getPopOver().hide();

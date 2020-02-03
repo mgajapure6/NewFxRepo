@@ -1,12 +1,17 @@
 
 package app.global;
 
+import org.controlsfx.control.PopOver;
+
 import com.gn.GNAvatarView;
 import com.gn.decorator.component.GNControl;
+
+import app.db.domain.User;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Node;
@@ -16,21 +21,28 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import org.controlsfx.control.PopOver;
 
 public class UserDetail extends GNControl {
 
-	private String name;
+	private User user;
 	public static PopOver root;
 
 	private Button signOut = new Button("Sign Out");
-	private Button profile = new Button("Profile");
+	// private Button profile = new Button("Profile");
 	private PopOver popOver = new PopOver();
 
 	private StringProperty header = new SimpleStringProperty();
+	
+	public User getLoggedUser() {
+		return user;
+	}
 
 	public UserDetail() {
 		super("", "");
@@ -42,9 +54,11 @@ public class UserDetail extends GNControl {
 		popOver.setContentNode(configLayout());
 	}
 
-	public UserDetail(String name, String text, String subtitle) {
-		super(text, subtitle);
-		this.headerProperty().set(name);
+	public UserDetail(User user) {
+		super("", "");
+		this.user = user;
+		this.headerProperty().set(
+				user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());
 		UserDetail.root = popOver;
 		popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
 		popOver.setArrowIndent(0);
@@ -55,7 +69,7 @@ public class UserDetail extends GNControl {
 
 	@Override
 	public Node icon() {
-		Image image = new Image(getClass().getResource("/com/gn/media/img/avatar.png").toExternalForm());
+		Image image = new Image(getClass().getResource("/com/gn/module/media/img_avatar.png").toExternalForm());
 		ImageView imageView = new ImageView(image);
 		imageView.setFitHeight(30);
 		imageView.setFitWidth(30);
@@ -92,32 +106,37 @@ public class UserDetail extends GNControl {
 		header.textProperty().bind(headerProperty());
 		Label subTitle = new Label();
 		HBox content = new HBox();
-		GridPane layoutContent = new GridPane();
+		HBox layoutContent = new HBox();
+		layoutContent.setAlignment(Pos.CENTER);
 
 		header.getStyleClass().add("h4");
 
 //        System.out.println(getName());
 		header.textProperty().bind(headerProperty());
-		subTitle.setText("Member since 2018");
+		subTitle.setText(user.getIsCustomer()
+				? "Customer since " +  DateFormatUtil.dateToString(user.getRegisterDate(), "dd-MM-YYYY")
+				: "Provider since " +  DateFormatUtil.dateToString(user.getRegisterDate(), "dd-MM-YYYY"));
 
 		GNAvatarView gnAvatar = new GNAvatarView();
-		gnAvatar.setImage(new Image(getClass().getResource("/com/gn/media/img/avatar.png").toExternalForm()));
+		gnAvatar.setImage(new Image(getClass().getResource("/com/gn/module/media/img_avatar.png").toExternalForm()));
 
 		background.setPrefHeight(500);
-		box.setPrefWidth(387);
-		box.setPrefHeight(300);
+		box.setPrefWidth(287);
+		box.setPrefHeight(200);
 
 		signOut.getStyleClass().addAll("outlined");
-		profile.getStyleClass().addAll("outlined");
+		// profile.getStyleClass().addAll("outlined");
 
 		signOut.setPrefWidth(100);
-		profile.setPrefWidth(100);
+		// profile.setPrefWidth(100);
 
 		signOut.setMinHeight(40);
-		profile.setMinHeight(40);
+		// profile.setMinHeight(40);
+		
+		layoutContent.setPadding(new Insets(10, 10, 10, 10));
 
-		layoutContent.add(signOut, 0, 0);
-		layoutContent.add(profile, 1, 0);
+		layoutContent.getChildren().add(signOut);
+		// layoutContent.add(profile, 1, 0);
 
 		ColumnConstraints column1 = new ColumnConstraints(100, 100, Double.MAX_VALUE);
 		ColumnConstraints column2 = new ColumnConstraints(100, 100, Double.MAX_VALUE);
@@ -132,8 +151,8 @@ public class UserDetail extends GNControl {
 
 		row.setValignment(VPos.CENTER);
 
-		layoutContent.getColumnConstraints().addAll(column1, column2);
-		layoutContent.getRowConstraints().addAll(row);
+		// layoutContent.getColumnConstraints().addAll(column1, column2);
+		// layoutContent.getRowConstraints().addAll(row);
 
 		background.setAlignment(Pos.CENTER);
 		background.getChildren().addAll(gnAvatar, header, subTitle);
@@ -155,7 +174,7 @@ public class UserDetail extends GNControl {
 	}
 
 	public String getName() {
-		return name;
+		return user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName();
 	}
 
 	public PopOver getPopOver() {
@@ -166,9 +185,9 @@ public class UserDetail extends GNControl {
 		this.signOut.setOnMouseClicked(event);
 	}
 
-	public void setProfileAction(EventHandler<MouseEvent> event) {
-		this.profile.setOnMouseClicked(event);
-	}
+//	public void setProfileAction(EventHandler<MouseEvent> event) {
+//		this.profile.setOnMouseClicked(event);
+//	}
 
 	public void setHeader(String header) {
 		headerProperty().setValue(header);

@@ -119,22 +119,31 @@ public class Account implements Initializable {
 
 		if (validEmail() && validFullName() && validFullName() && validUsername() && validPassword()) {
 
-			String user = username.getText();
-			String extension = "properties";
-
-			File directory = new File("user/");
-			File file = new File("user/" + user + "." + extension);
-
-			if (!directory.exists()) {
-				directory.mkdir();
-				file.createNewFile();
+			String userN = username.getText();
+			
+			UserDao userDao = new UserDao();
+			User user = userDao.getByUsername(userN);
+			System.out.println("check user::"+user);
+			if(user==null) {
 				setProperties();
-			} else if (!file.exists()) {
-				file.createNewFile();
-				setProperties();
-			} else {
+			}else {
 				lbl_error.setVisible(true);
 			}
+//			String extension = "properties";
+//
+//			File directory = new File("user/");
+//			File file = new File("user/" + user + "." + extension);
+//
+//			if (!directory.exists()) {
+//				directory.mkdir();
+//				file.createNewFile();
+//				setProperties();
+//			} else if (!file.exists()) {
+//				file.createNewFile();
+//				setProperties();
+//			} else {
+//				lbl_error.setVisible(true);
+//			}
 		} else if (!validUsername()) {
 			lbl_username.setVisible(true);
 		} else if (!validFullName()) {
@@ -159,7 +168,7 @@ public class Account implements Initializable {
 			customer = new Customer(null, fullname.getText(), null, null, null);
 		} else {
 			isCustomer = false;
-			provider = new Provider(null, fullname.getText());
+			provider = new Provider(null, fullname.getText(), null, null);
 			customer = null;
 		}
 
@@ -174,12 +183,12 @@ public class Account implements Initializable {
 		detail.setHeader(user.getUserName());
 
 		App.decorator.addCustom(detail);
-		detail.setProfileAction(event -> {
-			App.getUserDetail().getPopOver().hide();
-			// Main.ctrl.title.setText("Profile");
-			// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
-
-		});
+//		detail.setProfileAction(event -> {
+//			App.getUserDetail().getPopOver().hide();
+//			// Main.ctrl.title.setText("Profile");
+//			// Main.ctrl.body.setContent(ViewManager.getInstance().get("profile"));
+//
+//		});
 
 		detail.setSignAction(event -> {
 			App.getUserDetail().getPopOver().hide();
@@ -195,7 +204,12 @@ public class Account implements Initializable {
 			App.decorator.removeCustom(detail);
 		});
 
-		App.decorator.setContent(ViewManager.getInstance().get("main"));
+		if (accType.getValue().equals("Customer")) {
+			App.decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
+		} else {
+			App.decorator.setContent(ViewManager.getInstance().get("main"));
+		}
+		
 	}
 
 	@FXML
