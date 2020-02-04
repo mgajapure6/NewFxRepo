@@ -177,6 +177,8 @@ public class Account implements Initializable {
 
 		UserDao userDao = new UserDao();
 		userDao.saveUser(user, customer, provider);
+		
+		App.setUserDetail(user);
 
 		UserDetail detail = App.getUserDetail();
 		detail.setText(isCustomer ? customer.getCustomerName() : provider.getProviderName());

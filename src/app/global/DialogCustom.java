@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @SuppressWarnings("unchecked")
-class Dialog {
+public class DialogCustom {
 
 	private static Color color;
 	private static JFXDialog dialog = new JFXDialog();
@@ -37,12 +37,12 @@ class Dialog {
 		OK, CANCEL
 	}
 
-	static void createAlert(Type type, String title, String message) {
+	public static void createAlert(Type type, String title, String message) {
 		createLayout(createHeader(type), createContent(title, message),
 				createActions(type, new EventHandler[] { close }));
 	}
 
-	static void createAlert(Type type, String title, String message, EventHandler<MouseEvent>... confirm) {
+	public static void createAlert(Type type, String title, String message, EventHandler<MouseEvent>... confirm) {
 		createLayout(createHeader(type), createContent(title, message), createActions(type, confirm));
 	}
 

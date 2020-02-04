@@ -47,6 +47,10 @@ public class App extends Application {
 		return decorator;
 	}
 
+	public static void setUserDetail(User user) {
+		userDetail = new UserDetail(user);
+	}
+
 	public static UserDetail getUserDetail() {
 		return userDetail;
 	}
@@ -55,30 +59,30 @@ public class App extends Application {
 	public synchronized void init() {
 		HibernateUtil.getSessionFactory().openSession().close();
 		section = SectionManager.get();
-		UserDao userDao = new UserDao();
-		if (section.isLogged()) {
-			user = userDao.getByUsername(section.getUserLogged());
-			if (user != null) {
-				userDetail = new UserDetail(user);
-			} else {
-				userDetail = new UserDetail();
-			}
-
-		} else {
-			userDetail = new UserDetail();
-		}
+		// UserDao userDao = new UserDao();
+//		if (section.isLogged()) {
+//			user = userDao.getByUsername(section.getUserLogged());
+//			if (user != null) {
+//				userDetail = new UserDetail(user);
+//			} else {
+//				userDetail = new UserDetail();
+//			}
+//
+//		} else {
+//			userDetail = new UserDetail();
+//		}
 
 		float total = 43; // the difference represents the views not loaded
 		increment = 100f / total;
 
 		load("login", "login");
 		load("login", "account");
-		load("main", "customerHomeView");
-		load("main", "main");
-		load("dashboard", "dashboard");
-		load("product", "productView");
-		load("customer", "customerView");
-		load("bill", "billView");
+		// load("main", "customerHomeView");
+		// load("main", "main");
+		// load("dashboard", "dashboard");
+		// load("product", "productView");
+		// load("customer", "customerView");
+		// load("bill", "billView");
 		try {
 			wait(1000);
 		} catch (InterruptedException e) {

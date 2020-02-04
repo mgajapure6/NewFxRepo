@@ -32,6 +32,7 @@ import com.gn.GNAvatarView;
 import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -41,6 +42,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -173,10 +175,15 @@ public class login implements Initializable {
 			section.setLogged(true);
 			section.setUserLogged(this.username.getText());
 			SectionManager.save(section);
-			if (user.getIsCustomer()) {
-				App.decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
-			} else {
-				App.decorator.setContent(ViewManager.getInstance().get("main"));
+			App.setUserDetail(user);
+			try {
+				if (user.getIsCustomer()) {
+					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/main/customerHomeView.fxml")));
+				} else {
+					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/main/main.fxml")));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 			
 			App.decorator.setBarHeight(40);

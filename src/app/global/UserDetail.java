@@ -44,15 +44,15 @@ public class UserDetail extends GNControl {
 		return user;
 	}
 
-	public UserDetail() {
-		super("", "");
-		UserDetail.root = popOver;
-		popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
-		popOver.setArrowIndent(0);
-		popOver.setArrowSize(0);
-		popOver.setCornerRadius(0);
-		popOver.setContentNode(configLayout());
-	}
+//	public UserDetail() {
+//		super("", "");
+//		//UserDetail.root = popOver;
+//		//popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+//		//popOver.setArrowIndent(0);
+//		//popOver.setArrowSize(0);
+//		//popOver.setCornerRadius(0);
+//		//popOver.setContentNode(configLayout());
+//	}
 
 	public UserDetail(User user) {
 		super("", "");

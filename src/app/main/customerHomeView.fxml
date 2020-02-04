@@ -19,7 +19,15 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
 <?import javafx.scene.control.Button?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
 <StackPane fx:id="spRoot" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.main.CustomerHomeController">
 	<children>
@@ -45,7 +53,7 @@
 												<HBox>
 													<children>
 														<!-- <JFXBadge fx:id="cartBadge" position="TOP_RIGHT" styleClass="icons-badge" text="0"> <children> <FontAwesomeIconView fill="#5e5e5e" glyphName="SHOPPING_BAG" size="30" /> </children> </JFXBadge> -->
-														<JFXBadge fx:id="cartBadge" alignment="TOP_LEFT" onMouseClicked="#openCart" prefHeight="44.0" prefWidth="35.0" style="-fx-border-color: #ccc;-fx-font-size : 16px;" text="0">
+														<JFXBadge fx:id="cartBadge" alignment="TOP_LEFT" onMouseClicked="#openCart" prefHeight="44.0" prefWidth="35.0" style="-fx-border-color: #e7e7e7;-fx-font-size : 16px;" text="0">
 															<!-- <styleClass> <String fx:value="icon" /> <String fx:value="icon-warning" /> </styleClass> -->
 															<control>
 																<StackPane prefHeight="32.0" prefWidth="43.0" style="-fx-padding: 10;">
@@ -131,9 +139,9 @@
 		</JFXDialogLayout>
 	</JFXDialog>
 	<JFXDialog fx:id="placeOrderDialog">
-		<JFXDialogLayout style="-fx-background-color:#fff" prefWidth="750.0">
+		<JFXDialogLayout style="-fx-background-color:#fff" prefWidth="700.0">
 			<heading>
-				<Label prefHeight="38.0" prefWidth="700.0" text="Place Order">
+				<Label prefHeight="38.0" prefWidth="400.0" text="Place Order">
 					<styleClass>
 						<String fx:value="h4" />
 						<String fx:value="title" />
@@ -141,24 +149,219 @@
 				</Label>
 			</heading>
 			<body>
-				<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
-					<center>
-						<VBox alignment="CENTER_RIGHT" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+				<VBox>
+					<children>
+						<HBox alignment="CENTER_LEFT" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
 							<children>
-								<HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+								<HBox>
 									<children>
-										<Label prefHeight="17.0" prefWidth="342.0" text="Label" HBox.hgrow="ALWAYS" />
-										<Label prefHeight="17.0" prefWidth="193.0" text="Label" HBox.hgrow="ALWAYS" />
+										<Label text="Bill To ">
+											<font>
+												<Font size="15.0" />
+											</font>
+										</Label>
 									</children>
 								</HBox>
-								<Button fx:id="placeOrderBtn" mnemonicParsing="false" text="Place Order" />
+								<HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<TextFlow nodeOrientation="RIGHT_TO_LEFT">
+											<children>
+												<Text fx:id="placeOrderBillTo" fill="#282828" strokeType="OUTSIDE" strokeWidth="0.0" text="Text TextTextTextTextTextTextText">
+													<font>
+														<Font size="15" />
+													</font>
+												</Text>
+											</children>
+										</TextFlow>
+									</children>
+								</HBox>
 							</children>
-						</VBox>
-					</center>
-				</BorderPane>
+							<padding>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_LEFT" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
+							<children>
+								<HBox>
+									<children>
+										<Label text="Billing Address ">
+											<font>
+												<Font size="15.0" />
+											</font>
+										</Label>
+									</children>
+								</HBox>
+								<HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<TextFlow nodeOrientation="RIGHT_TO_LEFT">
+											<children>
+												<Text fx:id="placeOrderBillAddr" fill="#282828" strokeType="OUTSIDE" strokeWidth="0.0" text="Text TextTextTextTextTextTextText">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Text>
+											</children>
+										</TextFlow>
+									</children>
+								</HBox>
+							</children>
+							<padding>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_LEFT" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
+							<children>
+								<HBox>
+									<children>
+										<Label text="Total Items with quantity">
+											<font>
+												<Font size="15.0" />
+											</font>
+										</Label>
+									</children>
+								</HBox>
+								<HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<TextFlow nodeOrientation="RIGHT_TO_LEFT">
+											<children>
+												<Text fx:id="placeOrderTotQty" fill="#282828" strokeType="OUTSIDE" strokeWidth="0.0" text="Text TextTextTextTextTextTextText">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Text>
+											</children>
+										</TextFlow>
+									</children>
+								</HBox>
+							</children>
+							<padding>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_LEFT" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
+							<children>
+								<HBox>
+									<children>
+										<Label text="Total Amount">
+											<font>
+												<Font size="15.0" />
+											</font>
+										</Label>
+									</children>
+								</HBox>
+								<HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<TextFlow nodeOrientation="LEFT_TO_RIGHT">
+											<children>
+												<Text fx:id="placeOrderTotAmt" fill="#282828" strokeType="OUTSIDE" strokeWidth="0.0" text="\$ 0.00">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Text>
+											</children>
+										</TextFlow>
+									</children>
+								</HBox>
+							</children>
+							<padding>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_LEFT" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
+							<children>
+								<HBox>
+									<children>
+										<Label text="Balance Amount">
+											<font>
+												<Font size="15.0" />
+											</font>
+										</Label>
+									</children>
+								</HBox>
+								<HBox alignment="TOP_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<TextFlow nodeOrientation="LEFT_TO_RIGHT">
+											<children>
+												<Text fx:id="placeOrderBalAmt" fill="#282828" strokeType="OUTSIDE" strokeWidth="0.0" text="\$ 0.00">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Text>
+											</children>
+										</TextFlow>
+									</children>
+								</HBox>
+							</children>
+							<padding>
+								<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_RIGHT" spacing="10.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
+							<children>
+								<!-- <RadioButton fx:id="payNowRadio" mnemonicParsing="false" selected="true" text="Pay Now" > <font> <Font size="13.0" /> </font> <toggleGroup> <ToggleGroup fx:id="payNowLaterToggleGroup" /> </toggleGroup> </RadioButton> <RadioButton fx:id="payLaterRadio" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Pay Later" toggleGroup="$payNowLater"> <font> <Font size="13.0" /> </font> </RadioButton> -->
+								<TextField fx:id="payingAmountField" alignment="CENTER_RIGHT" promptText="Paying Amount" />
+							</children>
+							<padding>
+								<Insets bottom="10.0" top="10.0" />
+							</padding>
+						</HBox>
+						<HBox alignment="CENTER_RIGHT">
+							<children>
+								<JFXButton fx:id="cancelPlaceOrderBtn" styleClass="btn-info" text="Cancel Order">
+									<HBox.margin>
+										<Insets right="10.0" />
+									</HBox.margin>
+									<font>
+										<Font size="14.0" />
+									</font>
+								</JFXButton>
+								<JFXButton fx:id="placeOrderBtn" styleClass="btn-success" text="Place Order">
+									<font>
+										<Font size="14.0" />
+									</font>
+								</JFXButton>
+							</children>
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+						</HBox>
+					</children>
+					<padding>
+						<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+					</padding>
+				</VBox>
 			</body>
 		</JFXDialogLayout>
 	</JFXDialog>
+
+
+	<JFXDialog fx:id="alertDialog">
+		<JFXDialogLayout style="-fx-background-color:#fff">
+			<heading>
+				<Label fx:id="alertDialogTitle" prefHeight="38.0" prefWidth="400.0" text="">
+					<styleClass>
+						<String fx:value="h4" />
+						<String fx:value="title" />
+					</styleClass>
+				</Label>
+			</heading>
+			<body>
+				<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20" alignment="CENTER_RIGHT">
+					<children>
+						<Button fx:id="alertDialogBtn" onAction="#deleteConfirmFromDialog" mnemonicParsing="false" prefHeight="54.0" prefWidth="121.0" styleClass="btn-success" text="Delete Now">
+							<font>
+								<Font size="14.0" />
+							</font>
+						</Button>
+					</children>
+				</HBox>
+			</body>
+			<actions>
+
+			</actions>
+		</JFXDialogLayout>
+	</JFXDialog>
+
 
 	<stylesheets>
 		<URL value="@../../com/gn/theme/css/material-color.css" />
