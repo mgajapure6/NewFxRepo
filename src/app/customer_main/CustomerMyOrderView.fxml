@@ -34,6 +34,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import com.jfoenix.controls.JFXProgressBar?>
 
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+
 <StackPane fx:id="spRoot" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.customer_main.CustomerMyOrderView">
 	<children>
 		<BorderPane>
@@ -208,41 +211,35 @@
 												<ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
 												<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="100.0" />
 											</columnConstraints>
-											<rowConstraints>
+											<!-- <rowConstraints>
 												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
 												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-											</rowConstraints>
+											</rowConstraints> -->
 											<children>
-												<Label text="Total Amount">
+												<Label text="Total Amount" styleClass="cart_title">
 													<font>
 														<Font size="15.0" />
 													</font>
 												</Label>
-												<Label fx:id="myOrderTotalAmt" text="\$ 12000.00" textFill="#4d4d4d" GridPane.columnIndex="1">
-													<font>
-														<Font name="System Bold" size="15.0" />
-													</font>
-												</Label>
-												<Label text="Balance Amount " GridPane.rowIndex="1">
-													<font>
-														<Font size="15.0" />
-													</font>
-												</Label>
-												<Label fx:id="myOrderBalanceAmt" text="\$ 1200000.00" textFill="#4d4d4d" GridPane.columnIndex="1" GridPane.rowIndex="1">
+												<Label fx:id="myOrderTotalAmt" styleClass="cart_title" text="\$ 12000.00" textFill="#4d4d4d" GridPane.columnIndex="1">
 													<font>
 														<Font name="System Bold" size="15.0" />
 													</font>
 												</Label>
 											</children>
 										</GridPane>
-										<HBox>
+										<HBox fx:id="radioHBox" alignment="CENTER_RIGHT" spacing="50.0" style="-fx-border-width: 0 0 1 0; -fx-border-color: #e7e7e7;">
 											<children>
-												<TextField fx:id="myOrderDetailPayNowField" minHeight="30.0" alignment="CENTER_RIGHT" promptText="Enter Amount" HBox.hgrow="ALWAYS" />
-												<Button fx:id="myOrderDetailPayNowBtn" prefHeight="30.00" minHeight="30.0" maxHeight="30.0" mnemonicParsing="false" text="Pay Now" />
+												<JFXRadioButton selected="true" text="Pay Now">
+													<toggleGroup>
+														<ToggleGroup fx:id="payNowPayLaterToggleGroup" />
+													</toggleGroup>
+												</JFXRadioButton>
+												<JFXRadioButton text="Pay Later" toggleGroup="$payNowPayLaterToggleGroup" />
 											</children>
-											<VBox.margin>
-												<Insets top="10.0" />
-											</VBox.margin>
+											<padding>
+												<Insets bottom="15.0" top="15.0" />
+											</padding>
 										</HBox>
 									</children>
 								</VBox>

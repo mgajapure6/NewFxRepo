@@ -1,19 +1,4 @@
-/*
- * Copyright (C) Gleidson Neves da Silveira
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package app.login;
 
 import animatefx.animation.Flash;
@@ -22,11 +7,12 @@ import animatefx.animation.SlideInLeft;
 import app.App;
 import app.db.dao.UserDao;
 import app.db.domain.User;
+import app.db.services.UserService;
 import app.global.Section;
 import app.global.SectionManager;
 import app.global.UserDetail;
 import app.global.ViewManager;
-import app.main.Main;
+import app.provider_main.Main;
 
 import com.gn.GNAvatarView;
 import javafx.animation.RotateTransition;
@@ -158,18 +144,19 @@ public class login implements Initializable {
 			enter();
 		else {
 			lbl_password.setVisible(true);
-			lbl_username.setVisible(true); 
+			lbl_username.setVisible(true);
 		}
 	}
 
 	private void enter() {
-		UserDao userDao = new UserDao();
+		UserService userService = new UserService();
+		// UserDao userDao = new UserDao();
 		System.out.println("userDao start");
-		User user = userDao.getByUsernameAndPassword(this.username.getText(), this.password.getText());
+		User user = userService.getByUsernameAndPassword(this.username.getText(), this.password.getText());
 		System.out.println("userDao end");
 		System.out.println("dbuser::" + user);
 
-		if (user !=null && user.getUserName().equals(this.username.getText())
+		if (user != null && user.getUserName().equals(this.username.getText())
 				&& user.getUserPassword().equals(this.password.getText())) {
 			Section section = new Section();
 			section.setLogged(true);
@@ -178,16 +165,17 @@ public class login implements Initializable {
 			App.setUserDetail(user);
 			try {
 				if (user.getIsCustomer()) {
-					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/customer_main/CustomerMain.fxml")));
+					App.decorator.setContent(
+							FXMLLoader.load(getClass().getResource("/app/customer_main/CustomerMain.fxml")));
 				} else {
-					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/main/main.fxml")));
+					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/provider_main/main.fxml")));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			
+
 			App.decorator.setBarHeight(40);
-			
+
 			UserDetail detail = App.getUserDetail();
 			detail.setText(
 					user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());

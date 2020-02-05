@@ -1,19 +1,4 @@
-/*
- * Copyright (C) Gleidson Neves da Silveira
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+
 package app.login;
 
 import animatefx.animation.*;
@@ -22,12 +7,12 @@ import app.db.dao.UserDao;
 import app.db.domain.Customer;
 import app.db.domain.Provider;
 import app.db.domain.User;
+import app.db.services.UserService;
 import app.global.Mask;
 import app.global.Section;
 import app.global.SectionManager;
 import app.global.UserDetail;
 import app.global.ViewManager;
-import app.main.Main;
 
 import com.gn.GNAvatarView;
 import javafx.animation.RotateTransition;
@@ -120,13 +105,13 @@ public class Account implements Initializable {
 		if (validEmail() && validFullName() && validFullName() && validUsername() && validPassword()) {
 
 			String userN = username.getText();
-			
-			UserDao userDao = new UserDao();
-			User user = userDao.getByUsername(userN);
-			System.out.println("check user::"+user);
-			if(user==null) {
+			UserService userService = new UserService();
+			// UserDao userDao = new UserDao();
+			User user = userService.getByUsername(userN);
+			System.out.println("check user::" + user);
+			if (user == null) {
 				setProperties();
-			}else {
+			} else {
 				lbl_error.setVisible(true);
 			}
 //			String extension = "properties";
@@ -177,7 +162,7 @@ public class Account implements Initializable {
 
 		UserDao userDao = new UserDao();
 		userDao.saveUser(user, customer, provider);
-		
+
 		App.setUserDetail(user);
 
 		UserDetail detail = App.getUserDetail();
@@ -211,7 +196,7 @@ public class Account implements Initializable {
 		} else {
 			App.decorator.setContent(ViewManager.getInstance().get("main"));
 		}
-		
+
 	}
 
 	@FXML

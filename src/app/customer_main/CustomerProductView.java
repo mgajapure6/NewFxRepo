@@ -2,6 +2,7 @@ package app.customer_main;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -12,6 +13,7 @@ import com.jfoenix.controls.JFXBadge;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
+import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 import com.jfoenix.controls.JFXSnackbarLayout;
@@ -24,13 +26,18 @@ import app.db.domain.BillProviderProduct;
 import app.db.domain.ProviderProduct;
 import app.db.domain.User;
 import app.db.dto.ProductDto;
+import app.db.services.BillService;
+import app.db.services.ProductService;
 import app.global.Alerts;
 import app.global.DateFormatUtil;
 import app.global.StringCheckerUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -44,6 +51,7 @@ import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -93,8 +101,8 @@ public class CustomerProductView implements Initializable {
 	@FXML
 	private VBox placeOrderListView;
 
-	@FXML
-	private TextField payingAmountField;
+//	@FXML
+//	private TextField payingAmountField;
 
 	@FXML
 	private Text placeOrderBillTo;
@@ -105,8 +113,6 @@ public class CustomerProductView implements Initializable {
 	@FXML
 	private Text placeOrderTotAmt;
 	@FXML
-	private Text placeOrderBalAmt;
-	@FXML
 	private Label alertDialogTitle;
 	@FXML
 	private Button alertDialogBtn;
@@ -115,9 +121,15 @@ public class CustomerProductView implements Initializable {
 	private JFXDialog alertDialog;
 
 	@FXML
-	private ToggleGroup payNowLaterToggleGroup;
+	private ToggleGroup payNowPayLaterToggleGroup;
+	
+	@FXML
+	private TextField searchField;
 
+	
 	User loggedUser = App.getUserDetail().getLoggedUser();
+	
+	ObservableList<ProviderProduct> productsObservableList = FXCollections.observableArrayList();
 
 	ListView<ProviderProduct> productListView = new ListView<>();
 	ListView<ProviderProduct> cartListView = new ListView<>();
@@ -137,15 +149,18 @@ public class CustomerProductView implements Initializable {
 	}
 
 	public void tabOne() {
-		ProductDao productDao = new ProductDao();
-		BillDao billDao = new BillDao();
-		List<ProviderProduct> providerProducts = productDao.getAllProviderProducts();
-		List<Bill> bills = billDao.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
+		//ProductDao productDao = new ProductDao();
+		ProductService productService = new ProductService();
+		//BillDao billDao = new BillDao();
+		BillService billService = new BillService();
+		List<ProviderProduct> providerProducts = productService.getAllProviderProducts();
+		List<Bill> bills = billService.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
 
 		for (ProviderProduct providerProduct : providerProducts) {
-			productListView.getItems().add(providerProduct);
+			productsObservableList.add(providerProduct);
 		}
-
+		
+		productListView.getItems().addAll(productsObservableList);
 		productListView.setCellFactory(prodListView -> new ProductListViewCell());
 
 		cartListView.setCellFactory(prodListView -> new CartListViewCell());
@@ -188,37 +203,37 @@ public class CustomerProductView implements Initializable {
 
 		alertDialog.setDialogContainer(spRoot);
 
-		payingAmountField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (StringCheckerUtil.isInteger(newValue) || StringCheckerUtil.isDouble(newValue)) {
-
-					if (Double.parseDouble(newValue) > Double
-							.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])) {
-						payingAmountField.getStyleClass().add("tferror");
-						placeOrderBtn.setDisable(true);
-						placeOrderBalAmt.setText(
-								"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
-					} else {
-						payingAmountField.getStyleClass().remove("tferror");
-						placeOrderBtn.setDisable(false);
-						placeOrderBalAmt.setText(
-								"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])
-										- Double.parseDouble(newValue)));
-					}
-				} else if (!newValue.isEmpty()) {
-					System.out.println("adding class:: err");
-					payingAmountField.getStyleClass().add("tferror");
-					placeOrderBtn.setDisable(true);
-					placeOrderBalAmt.setText(
-							"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
-				} else {
-					placeOrderBalAmt.setText(
-							"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
-				}
-
-			}
-		});
+//		payingAmountField.textProperty().addListener(new ChangeListener<String>() {
+//			@Override
+//			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+//				if (StringCheckerUtil.isInteger(newValue) || StringCheckerUtil.isDouble(newValue)) {
+//
+//					if (Double.parseDouble(newValue) > Double
+//							.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])) {
+//						payingAmountField.getStyleClass().add("tferror");
+//						placeOrderBtn.setDisable(true);
+//						placeOrderBalAmt.setText(
+//								"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
+//					} else {
+//						payingAmountField.getStyleClass().remove("tferror");
+//						placeOrderBtn.setDisable(false);
+//						placeOrderBalAmt.setText(
+//								"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])
+//										- Double.parseDouble(newValue)));
+//					}
+//				} else if (!newValue.isEmpty()) {
+//					System.out.println("adding class:: err");
+//					payingAmountField.getStyleClass().add("tferror");
+//					placeOrderBtn.setDisable(true);
+//					placeOrderBalAmt.setText(
+//							"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
+//				} else {
+//					placeOrderBalAmt.setText(
+//							"$ " + String.valueOf(Double.parseDouble(cartTotalAmt.getText().trim().split(" ")[1])));
+//				}
+//
+//			}
+//		});
 
 		cartBuyNowBtn.setOnAction(event -> {
 			Integer itmsCount = 0;
@@ -229,7 +244,6 @@ public class CustomerProductView implements Initializable {
 			placeOrderBillAddr.setText(loggedUser.getCustomer().getAddress());
 			placeOrderTotQty.setText(itmsCount.toString());
 			placeOrderTotAmt.setText(cartTotalAmt.getText());
-			placeOrderBalAmt.setText(cartTotalAmt.getText());
 			placeOrderDialog.setTransitionType(DialogTransition.CENTER);
 			placeOrderDialog.show();
 		});
@@ -245,8 +259,9 @@ public class CustomerProductView implements Initializable {
 				bpp.setProviderProduct(providerProduct);
 				billProviderProductSet.add(bpp);
 			}
-			Double balAmt = Double.parseDouble(placeOrderBalAmt.getText().trim().split(" ")[1]);
-			boolean isSaved = billDao.saveBill(loggedUser.getCustomer(), billProviderProductSet, balAmt);
+			JFXRadioButton rb = (JFXRadioButton) payNowPayLaterToggleGroup.getSelectedToggle();
+			boolean isPaid = rb.getText().equals("Pay Later")  ? false : true; 
+			boolean isSaved = billService.saveBill(loggedUser.getCustomer(), billProviderProductSet, isPaid);
 			if (isSaved) {
 				cartListView.getItems().clear();
 				placeOrderDialog.close();
@@ -279,6 +294,40 @@ public class CustomerProductView implements Initializable {
 		alertDialogBtn.setOnAction(event -> {
 			alertDialog.close();
 		});
+		
+		payNowPayLaterToggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+		    public void changed(ObservableValue<? extends Toggle> ov,
+		        Toggle old_toggle, Toggle new_toggle) {
+		            if (payNowPayLaterToggleGroup.getSelectedToggle() != null) {
+		            	JFXRadioButton rb = (JFXRadioButton) payNowPayLaterToggleGroup.getSelectedToggle();
+		                System.out.println("toggle::"+rb.getText());
+		            }                
+		        }
+		});
+		
+		FilteredList<ProviderProduct> filteredData = new FilteredList<>(productsObservableList, p -> true);
+		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+			filteredData.setPredicate(productProp -> {
+				if (newValue == null || newValue.isEmpty()) {
+					return true;
+				}
+				String lowerCaseFilter = newValue.toLowerCase();
+				if (productProp.getProduct().getProductName().toLowerCase().contains(lowerCaseFilter)) {
+					return true;
+				} else if (productProp.getProduct().getDescription().toLowerCase().contains(lowerCaseFilter)) {
+					return true;
+				} else if (Double.toString(productProp.getProduct().getPrice()).contains(newValue)) {
+					return true;
+				}
+				return false; // Does not match.
+			});
+		});
+
+//		SortedList<ProviderProduct> sortedData = new SortedList<>(filteredData);
+//		sortedData.comparatorProperty().bind(productListView.comparatorProperty());
+		productListView.setItems(filteredData);
+		
+		
 	}
 
 	@FXML

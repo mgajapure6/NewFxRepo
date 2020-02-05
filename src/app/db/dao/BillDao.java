@@ -23,20 +23,14 @@ import app.db.util.HibernateUtil;
 
 public class BillDao {
 
-	public Boolean saveBill(Customer customer, Set<BillProviderProduct> billProviderProductSet, Double balAmt) {
+	public Boolean saveBill(Customer customer, Set<BillProviderProduct> billProviderProductSet, boolean isPaid) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		session.beginTransaction();
 
 		Bill bill = new Bill();
 		bill.setCustomer(customer);
-
-		if (balAmt == 0) {
-			bill.setIsPaid(true);
-		} else {
-			bill.setIsPaid(false);
-		}
 		bill.setBillDate(new Date());
-
+		bill.setIsPaid(isPaid);
 		try {
 			session.saveOrUpdate(bill);
 
@@ -132,4 +126,23 @@ public class BillDao {
 	 * 
 	 * 
 	 */
+
+	public boolean saveOnlyBill(Bill selectedBill) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		session.beginTransaction();
+
+		try {
+			System.out.println("selectedBill::"+selectedBill);
+			session.saveOrUpdate(selectedBill);
+			session.getTransaction().commit();
+			session.close();
+			return true;
+		} catch (Exception e) {
+			session.getTransaction().commit();
+			session.close();
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
 }

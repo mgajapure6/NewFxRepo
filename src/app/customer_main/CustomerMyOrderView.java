@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXDialog;
+import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
 import com.jfoenix.controls.JFXSnackbar;
 
@@ -15,6 +16,7 @@ import app.db.dao.ProductDao;
 import app.db.domain.Bill;
 import app.db.domain.User;
 import app.db.dto.ProductDto;
+import app.db.services.BillService;
 import app.global.Alerts;
 import app.global.DateFormatUtil;
 import app.global.StringCheckerUtil;
@@ -29,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -74,27 +77,26 @@ public class CustomerMyOrderView implements Initializable {
 	VBox billListAppenderVbox;
 
 	@FXML
-	private TextField myOrderDetailPayNowField;
-
-	@FXML
 	private JFXDialog myOrderDetailDialog;
+	
+	@FXML
+	private ToggleGroup payNowPayLaterToggleGroup;
+	
+	@FXML
+	HBox radioHBox;
 
 	User loggedUser = App.getUserDetail().getLoggedUser();
-
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				tabOne();
-			}
-		});
+		tabOne();
 	}
-
+	
+	
 	public void tabOne() {
-		BillDao billDao = new BillDao();
-		List<Bill> bills = billDao.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
+		//BillDao billDao = new BillDao();
+		BillService billService = new BillService();
+		List<Bill> bills = billService.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
 
 		for (Bill bill : bills) {
 			myOrderListView.getItems().add(bill);
@@ -102,16 +104,16 @@ public class CustomerMyOrderView implements Initializable {
 
 		myOrderListView.setCellFactory(prodListView -> new MyOrderListViewCell());
 
-		myOrderListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override
-			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue,
-					Boolean newPropertyValue) {
-				if (newPropertyValue) {
-				} else {
-					myOrderListView.getSelectionModel().clearSelection();
-				}
-			}
-		});
+//		myOrderListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
+//			@Override
+//			public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldPropertyValue,
+//					Boolean newPropertyValue) {
+//				if (newPropertyValue) {
+//				} else {
+//					myOrderListView.getSelectionModel().clearSelection();
+//				}
+//			}
+//		});
 
 		VBox.setVgrow(myOrderListView, Priority.ALWAYS);
 		billListAppenderVbox.getChildren().add(myOrderListView);
@@ -123,20 +125,6 @@ public class CustomerMyOrderView implements Initializable {
 		
 		myOrderDetailDialog.setDialogContainer(spRoot);
 
-		myOrderDetailPayNowField.textProperty().addListener(new ChangeListener<String>() {
-			@Override
-			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				if (StringCheckerUtil.isInteger(newValue) || StringCheckerUtil.isDouble(newValue)) {
-
-				} else if (!newValue.isEmpty()) {
-
-				} else {
-
-				}
-
-			}
-		});
-
 		Alerts.success("Success", "Order Placed Successfully");
 
 		alertDialogBtn.setOnAction(event -> {
@@ -144,7 +132,40 @@ public class CustomerMyOrderView implements Initializable {
 		});
 		
 		myOrderOkBtn.setOnAction(event -> {
-			myOrderDetailDialog.close();
+			
+			if(radioHBox.isVisible()) {
+				JFXRadioButton rb = (JFXRadioButton) payNowPayLaterToggleGroup.getSelectedToggle();
+				boolean isPaid = rb.getText().equals("Pay Later")  ? false : true; 
+				if(isPaid) {
+					int indexCell = myOrderListView.getSelectionModel().getSelectedIndex();
+					Bill billl = myOrderListView.getSelectionModel().selectedItemProperty().get();
+					billl.setCustomer(loggedUser.getCustomer());
+					billl.setIsPaid(true);
+					boolean isSaved = billService.updateOnlyBill(billl);
+					if(isSaved) {
+						alertDialogTitle.setText("Order Updated Successfully");
+						alertDialog.setTransitionType(DialogTransition.CENTER);
+						alertDialogBtn.getStyleClass().remove("btn-danger");
+						alertDialogBtn.getStyleClass().add("btn-success");
+						alertDialog.show();
+						myOrderDetailDialog.close();
+						//tabOne();
+						myOrderListView.getItems().remove(indexCell);
+						
+						myOrderListView.getItems().add(billl);
+					}else {
+						alertDialogTitle.setText("Something went worng.. Unable to save this order");
+						alertDialog.setTransitionType(DialogTransition.CENTER);
+						alertDialogBtn.getStyleClass().remove("btn-success");
+						alertDialogBtn.getStyleClass().add("btn-danger");
+						alertDialog.show();
+					}
+				}else {
+					myOrderDetailDialog.close();
+				}
+			}else {
+				myOrderDetailDialog.close();
+			}
 		});
 	}
 
@@ -206,6 +227,15 @@ public class CustomerMyOrderView implements Initializable {
 					}
 
 					myOrderDetialListView.setPrefHeight(200);
+					
+					if(!bill.getIsPaid()) {
+						radioHBox.setVisible(true);
+					}else {
+						radioHBox.setVisible(false);
+					}
+					
+					myOrderListView.getSelectionModel().select(getIndex());
+					
 
 					VBox.setVgrow(myOrderDetialListView, Priority.ALWAYS);
 					myOrderDetailListAppenderBorderPane.setCenter(myOrderDetialListView);

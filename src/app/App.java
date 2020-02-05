@@ -10,7 +10,6 @@ import com.gn.decorator.GNDecorator;
 import com.gn.decorator.options.ButtonType;
 import com.sun.javafx.application.LauncherImpl;
 
-import app.db.dao.UserDao;
 import app.db.domain.User;
 import app.db.util.HibernateUtil;
 import app.global.Section;
@@ -18,7 +17,7 @@ import app.global.SectionManager;
 import app.global.UserDetail;
 import app.global.ViewManager;
 import app.loader.Loader;
-import app.main.Main;
+import app.provider_main.Main;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
