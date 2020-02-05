@@ -1,3 +1,72 @@
+.list-view:focused {
+    -fx-background-color : transparent;
+    -fx-background-insets : 0;
+    -fx-background-radius : 0;
+}
+
+
+.list-view {
+    -fx-background-insets : 0;
+    -fx-padding: 1;
+}
+
+.list-view  .list-cell:focused {
+    -fx-background-color: #d9ecff !important;
+}
+
+
+.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 1em 2em 1em 2em;
+    -fx-font-family: Roboto ;
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+
+.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:hover {
+    -fx-background-color: -light-gray;
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-background-color : white;
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .list-cell:focused {
+    -fx-background-color : transparent;
+    -fx-background-insets: 0;
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+.list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
+    -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+.list-view:focused .virtual-flow .scroll-bar:vertical {
+  -fx-border-color :  transparent transparent transparent transparent;
+  -fx-text-fill : #6b6b6b !important;
+    -fx-font-size: 16px !important;
+    -fx-font-weight : bold !important;
+}
+
+
 #productName, #cartProductName{
 	-fx-font-size: 16px !important;
 	-fx-font-weight : bold !important;
@@ -45,3 +114,9 @@
      -fx-border-width: 1 1 1 1 !important; 
      -fx-border-color: red !important; 
 }
+
+
+
+
+
+

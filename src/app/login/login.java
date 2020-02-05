@@ -178,7 +178,7 @@ public class login implements Initializable {
 			App.setUserDetail(user);
 			try {
 				if (user.getIsCustomer()) {
-					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/main/customerHomeView.fxml")));
+					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/customer_main/CustomerMain.fxml")));
 				} else {
 					App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/main/main.fxml")));
 				}

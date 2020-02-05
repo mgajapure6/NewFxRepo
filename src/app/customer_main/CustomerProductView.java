@@ -1,4 +1,4 @@
-package app.main;
+package app.customer_main;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,13 +55,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-public class CustomerHomeController implements Initializable {
+public class CustomerProductView implements Initializable {
 
 	@FXML
 	private StackPane spRoot;
-
-	@FXML
-	private Tab productsTab;
 
 	@FXML
 	private FlowPane productFlowPane;
@@ -124,57 +121,19 @@ public class CustomerHomeController implements Initializable {
 
 	ListView<ProviderProduct> productListView = new ListView<>();
 	ListView<ProviderProduct> cartListView = new ListView<>();
-	
-	@FXML
-	Tab myOrdersTab;
-	
-	@FXML
-	TabPane mainTabPane;
-	
+
 
 	JFXSnackbar snackbar;
-
-//	my orders tab
-	ListView<Bill> myOrderListView = new ListView<>();
-	@FXML
-	Label myOrdersTotalOrders;
-	@FXML
-	Label myOrderPendingBills;
-	@FXML
-	Label myOrderPendingAmt;
-	@FXML
-	Label myOrderPaidAmt;
-	@FXML
-	Label myOrderNumberTitle;
-	@FXML
-	BorderPane myOrderDetailListAppenderBorderPane;
-	@FXML
-	Label myOrderTotalAmt;
-	@FXML
-	Button myOrderOkBtn;
-
-	@FXML
-	VBox billListAppenderVbox;
-	
-	@FXML
-	private JFXDialog myOrderDetailDialog;
-
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		Platform.runLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				tabOne();
 			}
 		});
-		//tabOne();
-		tabTwo();
-	}
-
-	public void tabTwo() {
-
 	}
 
 	public void tabOne() {
@@ -187,15 +146,9 @@ public class CustomerHomeController implements Initializable {
 			productListView.getItems().add(providerProduct);
 		}
 
-		for (Bill bill : bills) {
-			myOrderListView.getItems().add(bill);
-		}
-
 		productListView.setCellFactory(prodListView -> new ProductListViewCell());
 
 		cartListView.setCellFactory(prodListView -> new CartListViewCell());
-
-		myOrderListView.setCellFactory(prodListView -> new MyOrderListViewCell());
 
 		productListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -221,11 +174,9 @@ public class CustomerHomeController implements Initializable {
 
 		VBox.setVgrow(productListView, Priority.ALWAYS);
 		VBox.setVgrow(cartListView, Priority.ALWAYS);
-		VBox.setVgrow(myOrderListView, Priority.ALWAYS);
-		
+
 		productListAppenderVbox.getChildren().add(productListView);
 		cartListAppenderBorderPane.setCenter(cartListView);
-		billListAppenderVbox.getChildren().add(myOrderListView);
 
 		snackbar = new JFXSnackbar((Pane) spRoot);
 		snackbar.setStyle("-jfx-background-color: #f44336");
@@ -234,8 +185,6 @@ public class CustomerHomeController implements Initializable {
 		cartDialog.prefWidth(700);
 
 		placeOrderDialog.setDialogContainer(spRoot);
-		
-		myOrderDetailDialog.setDialogContainer(spRoot);
 
 		alertDialog.setDialogContainer(spRoot);
 
@@ -504,140 +453,6 @@ public class CustomerHomeController implements Initializable {
 				cartProductDesc.setText(String.valueOf(pe.getProduct().getDescription()));
 				cartProductUnitPrice.setText("$ " + pe.getProduct().getPrice().toString());
 				setGraphic(hboxCartListCell);
-			}
-
-		}
-
-	}
-
-	class MyOrderListViewCell extends ListCell<Bill> {
-
-		@FXML
-		private Button moCellViewOrderBtn;
-
-		@FXML
-		private HBox hboxMyOrderListCell;
-
-		@FXML
-		Label moCellOrderId;
-		@FXML
-		Label moCellDate;
-		@FXML
-		Label moCellOrderAmt;
-		@FXML
-		Label myCellStatus;
-
-		private FXMLLoader mLLoader;
-
-		@Override
-		protected void updateItem(Bill bill, boolean empty) {
-			super.updateItem(bill, empty);
-
-			if (empty || bill == null) {
-				setText(null);
-				setGraphic(null);
-				setOpacity(0);
-			} else {
-				setOpacity(1);
-				if (mLLoader == null) {
-					mLLoader = new FXMLLoader(getClass().getResource("myOderCell.fxml"));
-					mLLoader.setController(this);
-					try {
-						mLLoader.load();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-
-				moCellOrderId.setText("# Order Number " + bill.getBillId());
-
-				moCellDate.setText("# Order Date " + DateFormatUtil.dateToString(bill.getBillDate(), "dd-MM-YYYY"));
-
-				moCellOrderAmt.setText("$ " + bill.getBillAmount());
-
-				myCellStatus.setText(bill.getIsPaid() ? "Paid" : "Unpaid");
-
-				moCellViewOrderBtn.setOnAction(event -> {
-					BillDao billDao = new BillDao();
-					ListView<ProductDto> myOrderDetialListView = new ListView<>();
-					
-					List<ProductDto> pdts = billDao.getBillDetailById(bill.getBillId());
-					
-					for (ProductDto productDto : pdts) {
-						myOrderDetialListView.getItems().add(productDto);
-					}
-					
-					myOrderDetialListView.setPrefHeight(200);
-					
-					VBox.setVgrow(myOrderDetialListView, Priority.ALWAYS);
-					myOrderDetailListAppenderBorderPane.setCenter(myOrderDetialListView);
-					myOrderDetialListView.setCellFactory(prodListView -> new MyOrderDetailListViewCell());
-					myOrderNumberTitle.setText("# Order number "+bill.getBillId());
-					myOrderTotalAmt.setText("$ "+bill.getBillAmount());
-					myOrderDetailDialog.setTransitionType(DialogTransition.CENTER);
-					myOrderDetailDialog.show();
-				});
-				setGraphic(hboxMyOrderListCell);
-			}
-
-		}
-
-	}
-
-	class MyOrderDetailListViewCell extends ListCell<ProductDto> {
-
-		@FXML
-		private HBox hboxOrderDetailListCell;
-
-		@FXML
-		Label moDetailCellProductName;
-		
-		@FXML
-		Label moDetailCellProductDesc;
-		@FXML
-		Label moDetailCellProductQty;
-		@FXML
-		Label moDetailCellProductUnitPrice;
-		@FXML
-		Label moDetailCellProductTotAmt;
-		
-
-		private FXMLLoader mLLoader;
-
-		@Override
-		protected void updateItem(ProductDto pd, boolean empty) {
-			super.updateItem(pd, empty);
-
-			if (empty || pd == null) {
-				setText(null);
-				setGraphic(null);
-				setOpacity(0);
-			} else {
-				setOpacity(1);
-				if (mLLoader == null) {
-					mLLoader = new FXMLLoader(getClass().getResource("MyOrderDetailListCell.fxml"));
-					mLLoader.setController(this);
-					try {
-						mLLoader.load();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-
-				moDetailCellProductName.setText("" + pd.getProductName());
-
-				moDetailCellProductDesc.setText("" +pd.getDescription());
-
-				moDetailCellProductQty.setText("" + pd.getQty());
-
-				moDetailCellProductUnitPrice.setText(""+pd.getRate());
-				
-				moDetailCellProductTotAmt.setText("" + pd.getAmount());
-
-//				moCellViewOrderBtn.setOnAction(event -> {
-//
-//				});
-				setGraphic(hboxOrderDetailListCell);
 			}
 
 		}
