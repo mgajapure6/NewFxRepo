@@ -2,21 +2,16 @@ package app.main;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.jfoenix.controls.JFXBadge;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialog.DialogTransition;
-import com.jfoenix.controls.JFXListView;
 import com.jfoenix.controls.JFXSnackbar;
 import com.jfoenix.controls.JFXSnackbar.SnackbarEvent;
 import com.jfoenix.controls.JFXSnackbarLayout;
@@ -25,14 +20,14 @@ import app.App;
 import app.db.dao.BillDao;
 import app.db.dao.ProductDao;
 import app.db.domain.Bill;
-import app.db.domain.Product;
+import app.db.domain.BillProviderProduct;
 import app.db.domain.ProviderProduct;
 import app.db.domain.User;
+import app.db.dto.ProductDto;
 import app.global.Alerts;
-import app.global.DialogCustom;
+import app.global.DateFormatUtil;
 import app.global.StringCheckerUtil;
-import app.product.ProductEntity;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -45,11 +40,10 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -60,7 +54,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import app.db.domain.BillProviderProduct;
 
 public class CustomerHomeController implements Initializable {
 
@@ -77,7 +70,7 @@ public class CustomerHomeController implements Initializable {
 	private JFXBadge cartBadge;
 
 	@FXML
-	private VBox listAppenderVbox;
+	private VBox productListAppenderVbox;
 
 	@FXML
 	private JFXDialog cartDialog;
@@ -120,10 +113,9 @@ public class CustomerHomeController implements Initializable {
 	private Label alertDialogTitle;
 	@FXML
 	private Button alertDialogBtn;
-	
+
 	@FXML
 	private JFXDialog alertDialog;
-
 
 	@FXML
 	private ToggleGroup payNowLaterToggleGroup;
@@ -132,24 +124,78 @@ public class CustomerHomeController implements Initializable {
 
 	ListView<ProviderProduct> productListView = new ListView<>();
 	ListView<ProviderProduct> cartListView = new ListView<>();
+	
+	@FXML
+	Tab myOrdersTab;
+	
+	@FXML
+	TabPane mainTabPane;
+	
 
 	JFXSnackbar snackbar;
 
-	private static final Pattern amountPattren = Pattern.compile("^(\\d*\\.)?\\d+$");
+//	my orders tab
+	ListView<Bill> myOrderListView = new ListView<>();
+	@FXML
+	Label myOrdersTotalOrders;
+	@FXML
+	Label myOrderPendingBills;
+	@FXML
+	Label myOrderPendingAmt;
+	@FXML
+	Label myOrderPaidAmt;
+	@FXML
+	Label myOrderNumberTitle;
+	@FXML
+	BorderPane myOrderDetailListAppenderBorderPane;
+	@FXML
+	Label myOrderTotalAmt;
+	@FXML
+	Button myOrderOkBtn;
+
+	@FXML
+	VBox billListAppenderVbox;
+	
+	@FXML
+	private JFXDialog myOrderDetailDialog;
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				tabOne();
+			}
+		});
+		//tabOne();
+		tabTwo();
+	}
 
+	public void tabTwo() {
+
+	}
+
+	public void tabOne() {
 		ProductDao productDao = new ProductDao();
+		BillDao billDao = new BillDao();
 		List<ProviderProduct> providerProducts = productDao.getAllProviderProducts();
+		List<Bill> bills = billDao.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
 
 		for (ProviderProduct providerProduct : providerProducts) {
 			productListView.getItems().add(providerProduct);
 		}
 
+		for (Bill bill : bills) {
+			myOrderListView.getItems().add(bill);
+		}
+
 		productListView.setCellFactory(prodListView -> new ProductListViewCell());
 
 		cartListView.setCellFactory(prodListView -> new CartListViewCell());
+
+		myOrderListView.setCellFactory(prodListView -> new MyOrderListViewCell());
 
 		productListView.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override
@@ -175,8 +221,11 @@ public class CustomerHomeController implements Initializable {
 
 		VBox.setVgrow(productListView, Priority.ALWAYS);
 		VBox.setVgrow(cartListView, Priority.ALWAYS);
-		listAppenderVbox.getChildren().add(productListView);
+		VBox.setVgrow(myOrderListView, Priority.ALWAYS);
+		
+		productListAppenderVbox.getChildren().add(productListView);
 		cartListAppenderBorderPane.setCenter(cartListView);
+		billListAppenderVbox.getChildren().add(myOrderListView);
 
 		snackbar = new JFXSnackbar((Pane) spRoot);
 		snackbar.setStyle("-jfx-background-color: #f44336");
@@ -186,6 +235,8 @@ public class CustomerHomeController implements Initializable {
 
 		placeOrderDialog.setDialogContainer(spRoot);
 		
+		myOrderDetailDialog.setDialogContainer(spRoot);
+
 		alertDialog.setDialogContainer(spRoot);
 
 		payingAmountField.textProperty().addListener(new ChangeListener<String>() {
@@ -233,7 +284,7 @@ public class CustomerHomeController implements Initializable {
 			placeOrderDialog.setTransitionType(DialogTransition.CENTER);
 			placeOrderDialog.show();
 		});
-		
+
 		Alerts.success("Success", "Order Placed Successfully");
 
 		placeOrderBtn.setOnAction(event -> {
@@ -246,40 +297,39 @@ public class CustomerHomeController implements Initializable {
 				billProviderProductSet.add(bpp);
 			}
 			Double balAmt = Double.parseDouble(placeOrderBalAmt.getText().trim().split(" ")[1]);
-			BillDao billDao = new BillDao();
 			boolean isSaved = billDao.saveBill(loggedUser.getCustomer(), billProviderProductSet, balAmt);
-			if(isSaved) {
+			if (isSaved) {
 				cartListView.getItems().clear();
 				placeOrderDialog.close();
 				cartDialog.close();
-				calculateCartValue();
+				cartTotalAmt.setText("$ 0.00");
+				cartBadge.setText("0");
 				alertDialogTitle.setText("Order Placed Successfully");
 				alertDialog.setTransitionType(DialogTransition.CENTER);
 				alertDialogBtn.getStyleClass().remove("btn-danger");
 				alertDialogBtn.getStyleClass().add("btn-success");
 				alertDialog.show();
-				
-				//Alerts.success("Success", "Order Placed Successfully");
-			}else {
-				//Alerts.error("Error", "Something went worng.. Unable to save this order.");
+
+				// Alerts.success("Success", "Order Placed Successfully");
+			} else {
+				// Alerts.error("Error", "Something went worng.. Unable to save this order.");
 				alertDialogTitle.setText("Something went worng.. Unable to save this order");
 				alertDialog.setTransitionType(DialogTransition.CENTER);
 				alertDialogBtn.getStyleClass().remove("btn-success");
 				alertDialogBtn.getStyleClass().add("btn-danger");
 				alertDialog.show();
 			}
-			//bill.setBillProviderProducts(set);
-			
+			// bill.setBillProviderProducts(set);
+
 		});
 
 		cancelPlaceOrderBtn.setOnAction(event -> {
 			placeOrderDialog.close();
 		});
-		
-		alertDialogBtn.setOnAction(event -> {
-			alertDialog.show();
-		});
 
+		alertDialogBtn.setOnAction(event -> {
+			alertDialog.close();
+		});
 	}
 
 	@FXML
@@ -460,20 +510,134 @@ public class CustomerHomeController implements Initializable {
 
 	}
 
-	class PlaceOrderListViewCell extends ListCell<ProviderProduct> {
+	class MyOrderListViewCell extends ListCell<Bill> {
+
+		@FXML
+		private Button moCellViewOrderBtn;
+
+		@FXML
+		private HBox hboxMyOrderListCell;
+
+		@FXML
+		Label moCellOrderId;
+		@FXML
+		Label moCellDate;
+		@FXML
+		Label moCellOrderAmt;
+		@FXML
+		Label myCellStatus;
+
+		private FXMLLoader mLLoader;
 
 		@Override
-		protected void updateItem(ProviderProduct pe, boolean empty) {
-			super.updateItem(pe, empty);
+		protected void updateItem(Bill bill, boolean empty) {
+			super.updateItem(bill, empty);
 
-			if (empty || pe == null) {
+			if (empty || bill == null) {
 				setText(null);
 				setGraphic(null);
 				setOpacity(0);
 			} else {
 				setOpacity(1);
-				HBox hboxCartListCell = new HBox();
-				Label l = new Label();
+				if (mLLoader == null) {
+					mLLoader = new FXMLLoader(getClass().getResource("myOderCell.fxml"));
+					mLLoader.setController(this);
+					try {
+						mLLoader.load();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				moCellOrderId.setText("# Order Number " + bill.getBillId());
+
+				moCellDate.setText("# Order Date " + DateFormatUtil.dateToString(bill.getBillDate(), "dd-MM-YYYY"));
+
+				moCellOrderAmt.setText("$ " + bill.getBillAmount());
+
+				myCellStatus.setText(bill.getIsPaid() ? "Paid" : "Unpaid");
+
+				moCellViewOrderBtn.setOnAction(event -> {
+					BillDao billDao = new BillDao();
+					ListView<ProductDto> myOrderDetialListView = new ListView<>();
+					
+					List<ProductDto> pdts = billDao.getBillDetailById(bill.getBillId());
+					
+					for (ProductDto productDto : pdts) {
+						myOrderDetialListView.getItems().add(productDto);
+					}
+					
+					myOrderDetialListView.setPrefHeight(200);
+					
+					VBox.setVgrow(myOrderDetialListView, Priority.ALWAYS);
+					myOrderDetailListAppenderBorderPane.setCenter(myOrderDetialListView);
+					myOrderDetialListView.setCellFactory(prodListView -> new MyOrderDetailListViewCell());
+					myOrderNumberTitle.setText("# Order number "+bill.getBillId());
+					myOrderTotalAmt.setText("$ "+bill.getBillAmount());
+					myOrderDetailDialog.setTransitionType(DialogTransition.CENTER);
+					myOrderDetailDialog.show();
+				});
+				setGraphic(hboxMyOrderListCell);
+			}
+
+		}
+
+	}
+
+	class MyOrderDetailListViewCell extends ListCell<ProductDto> {
+
+		@FXML
+		private HBox hboxOrderDetailListCell;
+
+		@FXML
+		Label moDetailCellProductName;
+		
+		@FXML
+		Label moDetailCellProductDesc;
+		@FXML
+		Label moDetailCellProductQty;
+		@FXML
+		Label moDetailCellProductUnitPrice;
+		@FXML
+		Label moDetailCellProductTotAmt;
+		
+
+		private FXMLLoader mLLoader;
+
+		@Override
+		protected void updateItem(ProductDto pd, boolean empty) {
+			super.updateItem(pd, empty);
+
+			if (empty || pd == null) {
+				setText(null);
+				setGraphic(null);
+				setOpacity(0);
+			} else {
+				setOpacity(1);
+				if (mLLoader == null) {
+					mLLoader = new FXMLLoader(getClass().getResource("MyOrderDetailListCell.fxml"));
+					mLLoader.setController(this);
+					try {
+						mLLoader.load();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				moDetailCellProductName.setText("" + pd.getProductName());
+
+				moDetailCellProductDesc.setText("" +pd.getDescription());
+
+				moDetailCellProductQty.setText("" + pd.getQty());
+
+				moDetailCellProductUnitPrice.setText(""+pd.getRate());
+				
+				moDetailCellProductTotAmt.setText("" + pd.getAmount());
+
+//				moCellViewOrderBtn.setOnAction(event -> {
+//
+//				});
+				setGraphic(hboxOrderDetailListCell);
 			}
 
 		}

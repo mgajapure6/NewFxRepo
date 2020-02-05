@@ -72,4 +72,12 @@ public class BillProviderProduct {
 		this.qtyRequested = qtyRequested;
 	}
 
+	@Override
+	public String toString() {
+		return "BillProviderProduct [billProviderProductId=" + billProviderProductId + ", providerProduct="
+				+ providerProduct + ", qtyRequested=" + qtyRequested + "]";
+	}
+	
+	
+
 }

@@ -18,7 +18,6 @@ import app.db.domain.Product;
 import app.db.domain.Provider;
 import app.db.domain.ProviderProduct;
 import app.db.domain.User;
-import app.db.dto.AllProductDto;
 import app.db.util.HibernateUtil;
 
 public class ProductDao {

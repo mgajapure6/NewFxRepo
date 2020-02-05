@@ -29,15 +29,19 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
 <StackPane fx:id="spRoot" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.main.CustomerHomeController">
 	<children>
-		<TabPane style="-fx-tab-min-width: 100;">
+		<TabPane fx:id="mainTabPane" style="-fx-tab-min-width: 100;">
 			<tabs>
 				<Tab fx:id="productsTab" closable="false" text="Products">
 					<content>
 						<BorderPane>
 							<center>
-								<VBox fx:id="listAppenderVbox">
+								<VBox fx:id="productListAppenderVbox">
 									<children>
 										<HBox>
 											<children>
@@ -84,13 +88,19 @@
 									</children>
 								</VBox>
 							</center>
-							<left>
-								<ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-							</left>
+							<!-- <left> <ListView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" /> </left> -->
 						</BorderPane>
 					</content>
 				</Tab>
-				<Tab closable="false" text="Suppliers" />
+				<Tab fx:id="myOrdersTab" closable="false" text="My Orders">
+					<content>
+						<VBox fx:id="billListAppenderVbox" VBox.vgrow="ALWAYS">
+							<children>
+								<fx:include source="collBanner.fxml" />
+							</children>
+						</VBox>
+					</content>
+				</Tab>
 			</tabs>
 		</TabPane>
 
@@ -348,7 +358,7 @@
 			<body>
 				<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20" alignment="CENTER_RIGHT">
 					<children>
-						<Button fx:id="alertDialogBtn" onAction="#deleteConfirmFromDialog" mnemonicParsing="false" prefHeight="54.0" prefWidth="121.0" styleClass="btn-success" text="Delete Now">
+						<Button fx:id="alertDialogBtn" mnemonicParsing="false" prefHeight="54.0" prefWidth="121.0" styleClass="btn-success" text="Ok">
 							<font>
 								<Font size="14.0" />
 							</font>
@@ -362,7 +372,84 @@
 		</JFXDialogLayout>
 	</JFXDialog>
 
-
+	<JFXDialog fx:id="myOrderDetailDialog">
+		<JFXDialogLayout style="-fx-background-color:#fff" prefWidth="750.0">
+			<heading>
+				<Label fx:id="myOrderNumberTitle" prefHeight="38.0" prefWidth="700.0" text="Order">
+					<styleClass>
+						<String fx:value="h4" />
+						<String fx:value="title" />
+					</styleClass>
+				</Label>
+			</heading>
+			<body>
+				<BorderPane fx:id="myOrderDetailListAppenderBorderPane" prefWidth="750.0">
+					<center>
+						<!-- <ScrollPane fx:id="cartListAppenderScrollPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER"> <content> <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" /> </content> </ScrollPane> -->
+					</center>
+					<bottom>
+						<HBox alignment="CENTER" spacing="20.0">
+							<children>
+								<VBox>
+									<children>
+										<GridPane>
+											<columnConstraints>
+												<ColumnConstraints hgrow="SOMETIMES" minWidth="150.0" />
+												<ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="100.0" />
+											</columnConstraints>
+											<rowConstraints>
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+												<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+											</rowConstraints>
+											<children>
+												<Label text="Total Amount">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Label>
+												<Label fx:id="myOrderTotalAmt" text="\$ 12000.00" textFill="#4d4d4d" GridPane.columnIndex="1">
+													<font>
+														<Font name="System Bold" size="15.0" />
+													</font>
+												</Label>
+												<Label text="Balance Amount " GridPane.rowIndex="1">
+													<font>
+														<Font size="15.0" />
+													</font>
+												</Label>
+												<Label fx:id="myOrderBalanceAmt" text="\$ 1200000.00" textFill="#4d4d4d" GridPane.columnIndex="1" GridPane.rowIndex="1">
+													<font>
+														<Font name="System Bold" size="15.0" />
+													</font>
+												</Label>
+											</children>
+										</GridPane>
+										<HBox>
+											<children>
+												<TextField fx:id="myOrderDetailPayNowField" minHeight="30.0" alignment="CENTER_RIGHT" promptText="Enter Amount" HBox.hgrow="ALWAYS" />
+												<Button fx:id="myOrderDetailPayNowBtn" prefHeight="30.00" minHeight="30.0" maxHeight="30.0" mnemonicParsing="false" text="Pay Now" />
+											</children>
+											<VBox.margin>
+												<Insets top="10.0" />
+											</VBox.margin>
+										</HBox>
+									</children>
+								</VBox>
+								<VBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+									<children>
+										<Button fx:id="myOrderOkBtn" prefWidth="100.0" mnemonicParsing="false" styleClass="btn-success" text="Ok" />
+									</children>
+								</VBox>
+							</children>
+							<padding>
+								<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+							</padding>
+						</HBox>
+					</bottom>
+				</BorderPane>
+			</body>
+		</JFXDialogLayout>
+	</JFXDialog>
 	<stylesheets>
 		<URL value="@../../com/gn/theme/css/material-color.css" />
 		<URL value="@../../com/gn/theme/css/skeleton2.css" />

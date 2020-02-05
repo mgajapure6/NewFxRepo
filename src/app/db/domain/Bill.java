@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table
@@ -29,6 +30,9 @@ public class Bill {
 	@ManyToOne
 	@JoinColumn(name = "customerId", nullable = false)
 	private Customer customer;
+
+	@Transient
+	private Double billAmount;
 
 	@OneToMany(mappedBy = "bill")
 	private Set<BillProviderProduct> billProviderProducts;
@@ -73,6 +77,14 @@ public class Bill {
 		this.billProviderProducts = billProviderProducts;
 	}
 
+	public Double getBillAmount() {
+		return billAmount;
+	}
+
+	public void setBillAmount(Double billAmount) {
+		this.billAmount = billAmount;
+	}
+
 	public Bill(Integer billId, Date billDate, Boolean isPaid, Customer customer,
 			Set<BillProviderProduct> billProviderProducts) {
 		super();
@@ -85,6 +97,12 @@ public class Bill {
 
 	public Bill() {
 		super();
+	}
+
+	@Override
+	public String toString() {
+		return "Bill [billId=" + billId + ", billDate=" + billDate + ", isPaid=" + isPaid + ", billProviderProducts="
+				+ billProviderProducts + "]";
 	}
 
 }
