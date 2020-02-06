@@ -17,6 +17,7 @@ import app.global.ViewManager;
 import com.gn.GNAvatarView;
 import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -140,7 +141,7 @@ public class Account implements Initializable {
 		}
 	}
 
-	private void setProperties() {
+	private void setProperties() throws IOException {
 
 		Section section = new Section(true, username.getText());
 		SectionManager.save(section);
@@ -166,7 +167,7 @@ public class Account implements Initializable {
 		App.setUserDetail(user);
 
 		UserDetail detail = App.getUserDetail();
-		detail.setText(isCustomer ? customer.getCustomerName() : provider.getProviderName());
+		detail.setText(user.getIsCustomer() ? "Customer : "+user.getCustomer().getCustomerName() : "Provider : "+user.getProvider().getProviderName());
 		detail.setHeader(user.getUserName());
 
 		App.decorator.addCustom(detail);
@@ -192,10 +193,12 @@ public class Account implements Initializable {
 		});
 
 		if (accType.getValue().equals("Customer")) {
-			App.decorator.setContent(ViewManager.getInstance().get("customerHomeView"));
+			App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/customer_main/CustomerMain.fxml")));
 		} else {
-			App.decorator.setContent(ViewManager.getInstance().get("main"));
+			App.decorator.setContent(FXMLLoader.load(getClass().getResource("/app/provider_main/main.fxml")));
 		}
+		
+		App.decorator.setBarHeight(50);
 
 	}
 

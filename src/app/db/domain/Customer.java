@@ -13,7 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Customer")
+@Table
 public class Customer {
 
 	@Id
@@ -27,7 +27,7 @@ public class Customer {
 	private String address;
 
 	@OneToOne
-	@JoinColumn(name = "customerId")
+	@JoinColumn(name = "custId")
 	private User user;
 
 	@OneToMany(mappedBy = "customer")

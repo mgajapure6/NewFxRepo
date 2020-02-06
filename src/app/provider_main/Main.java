@@ -18,6 +18,7 @@ import app.global.ViewManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -176,6 +177,12 @@ public class Main implements Initializable {
 		main.setOnMouseClicked((e)->{
 			
         });
+		
+		try {
+			productView();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	@FXML
@@ -413,11 +420,16 @@ public class Main implements Initializable {
 		search.clear();
 	}
 	
+//	@FXML
+//	private void dashboard() {
+//		title.setText("Dashboard");
+//		body.setContent(ViewManager.getInstance().get("dashboard"));
+//	}
+	
 	@FXML
-	private void dashboard() {
-		title.setText("Dashboard");
-		body.setContent(ViewManager.getInstance().get("dashboard"));
-	}
+    void profile(ActionEvent event) {
+
+    }
 
 	@FXML
 	private void productView() throws IOException {

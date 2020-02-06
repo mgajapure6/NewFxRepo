@@ -58,7 +58,7 @@ public class UserDetail extends GNControl {
 		super("", "");
 		this.user = user;
 		this.headerProperty().set(
-				user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());
+				user.getIsCustomer() ? "Customer : "+user.getCustomer().getCustomerName() : "Provider : "+user.getProvider().getProviderName());
 		UserDetail.root = popOver;
 		popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
 		popOver.setArrowIndent(0);

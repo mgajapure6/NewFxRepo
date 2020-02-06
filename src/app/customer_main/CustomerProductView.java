@@ -271,7 +271,7 @@ public class CustomerProductView implements Initializable {
 				alertDialogTitle.setText("Order Placed Successfully");
 				alertDialog.setTransitionType(DialogTransition.CENTER);
 				alertDialogBtn.getStyleClass().remove("btn-danger");
-				alertDialogBtn.getStyleClass().add("btn-success");
+				alertDialogBtn.getStyleClass().add("btn-info");
 				alertDialog.show();
 
 				// Alerts.success("Success", "Order Placed Successfully");
@@ -279,7 +279,7 @@ public class CustomerProductView implements Initializable {
 				// Alerts.error("Error", "Something went worng.. Unable to save this order.");
 				alertDialogTitle.setText("Something went worng.. Unable to save this order");
 				alertDialog.setTransitionType(DialogTransition.CENTER);
-				alertDialogBtn.getStyleClass().remove("btn-success");
+				alertDialogBtn.getStyleClass().remove("btn-info");
 				alertDialogBtn.getStyleClass().add("btn-danger");
 				alertDialog.show();
 			}

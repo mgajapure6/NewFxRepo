@@ -24,7 +24,7 @@ public class Provider {
 	private String providerName;
 
 	@OneToOne
-	@JoinColumn(name = "providerId")
+	@JoinColumn(name = "provId")
 	private User user;
 
 	@OneToMany(mappedBy = "provider")

@@ -103,4 +103,9 @@ public class ProductService {
 		return providerProductDto;
 	}
 
+	public Boolean deleteProviderProduct(ProviderProductDto ppd) {
+		
+		return null;
+	}
+
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -33,7 +34,7 @@ public class UserDao extends BasicDAO<User> {
 
 		}
 	}
-	
+
 	@Override
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public User findUserByUsernameAndPassword(String username, String pssword) throws Exception {
@@ -50,9 +51,7 @@ public class UserDao extends BasicDAO<User> {
 			predicates.add(cb.equal(root.get("userPassword"), pssword));
 			cq.select(root).where(predicates.toArray(new Predicate[] {}));
 			user = (User) em.createQuery(cq).getSingleResult();
-			System.out.println("retretuser::" + user);
-		} catch (Exception e) {
-			// em.getTransaction().rollback();
+		} catch (NoResultException  e) {
 			e.printStackTrace();
 			return null;
 		} finally {

@@ -21,6 +21,8 @@ import app.db.domain.ProviderProduct;
 import app.db.domain.User;
 import app.db.dto.ProviderProductDto;
 import app.db.services.ProductService;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -30,16 +32,23 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import javafx.scene.control.TableCell;
 
 public class ProviderProductView implements Initializable {
 	@FXML
@@ -57,11 +66,14 @@ public class ProviderProductView implements Initializable {
 	@FXML
 	private TableColumn<ProviderProductDto, Double> c5;
 	@FXML
+	private TableColumn<ProviderProductDto, ProviderProductDto> c6;
+	
+	@FXML
 	private Button addProductBtn;
-	@FXML
-	private Button ediProductBtn;
-	@FXML
-	private Button deleteProductBtn;
+//	@FXML
+//	private Button ediProductBtn;
+//	@FXML
+//	private Button deleteProductBtn;
 	@FXML
 	private TextField searchField;//
 	@FXML
@@ -70,13 +82,13 @@ public class ProviderProductView implements Initializable {
 	@FXML
 	private JFXDialog productDialog;
 	@FXML
-	private JFXTextField productNameField;
+	private TextField productNameField;
 	@FXML
-	private JFXTextArea productDescField;
+	private TextArea productDescField;
 	@FXML
-	private JFXTextField productQtyField;
+	private TextField productQtyField;
 	@FXML
-	private JFXTextField productPriceField;
+	private TextField productPriceField;
 
 	@FXML
 	private JFXDialog productDeleteConfirmDialog;
@@ -92,13 +104,25 @@ public class ProviderProductView implements Initializable {
 	@FXML
 	private Label lbl_pprice_err;
 
+	@FXML
+	private Button closeDialogButton;
+
+	@FXML
+	private Button alertDialogBtn;
+
+	@FXML
+	private Label alertDialogTitle;
+
+	@FXML
+	private JFXDialog alertDialog;
+
 	User loggedUser = App.getUserDetail().getLoggedUser();
 
 	ObservableList<ProviderProductDto> productsObservableList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
+		alertDialog.setDialogContainer(root);
 		lbl_pname_err.setVisible(false);
 		lbl_pqty_err.setVisible(false);
 		lbl_pprice_err.setVisible(false);
@@ -152,6 +176,57 @@ public class ProviderProductView implements Initializable {
 					}
 
 				});
+		
+		c6.setCellValueFactory(
+                param -> new ReadOnlyObjectWrapper<>(param.getValue())
+        );
+		
+		c6.setCellFactory(param -> new TableCell<ProviderProductDto, ProviderProductDto>() {
+			@Override
+            protected void updateItem(ProviderProductDto ppd, boolean empty) {
+				super.updateItem(ppd, empty);
+
+                if (ppd == null) {
+                    setGraphic(null);
+                    return;
+                }
+
+                HBox hb = new HBox();
+                hb.setAlignment(Pos.CENTER_LEFT);
+                hb.setSpacing(15.0);
+//                FontAwesomeIconView deleteIcon = new FontAwesomeIconView(FontAwesomeIcon.TIMES_CIRCLE);
+//                deleteIcon.setSize("20.0");
+//                deleteIcon.setFill(Color.WHITE);
+//                Button deleteBtn = new Button("", deleteIcon);
+//                Tooltip deleteTip = new Tooltip("Delete Product");
+//                Tooltip.install(deleteBtn, deleteTip);
+//                deleteBtn.getStyleClass().add("btn-danger");
+//                deleteBtn.setOnAction(e -> {
+//                	tableView.getSelectionModel().select(getIndex());
+//                	productDeleteConfirmDialog.setTransitionType(DialogTransition.CENTER);
+//    				productDeleteConfirmDialog.show();
+//                });
+                
+                FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.EDIT);
+                editIcon.setSize("20.0");
+                editIcon.setFill(Color.WHITE);
+                Button editBtn = new Button("", editIcon);
+                Tooltip editTip = new Tooltip("Edit Product");
+                Tooltip.install(editBtn, editTip);
+                editBtn.getStyleClass().add("btn-info");
+                
+                editBtn.setOnAction(e -> {
+                	tableView.getSelectionModel().select(getIndex());
+                	//editProductAction(ppd);
+                });
+                
+                hb.setAlignment(Pos.CENTER);
+                
+                hb.getChildren().addAll(editBtn);
+                setGraphic(editBtn);
+			}
+
+		});
 		tableView.setItems(productsObservableList);
 
 		FilteredList<ProviderProductDto> filteredData = new FilteredList<>(productsObservableList, p -> true);
@@ -180,8 +255,6 @@ public class ProviderProductView implements Initializable {
 		productDeleteConfirmDialog.setDialogContainer(root);
 
 		addProductBtn.setOnAction((e) -> {
-
-			System.out.println("loggedUser data:" + loggedUser);
 			productNameField.setText("");
 			productDescField.setText("");
 			productQtyField.setText("");
@@ -190,26 +263,26 @@ public class ProviderProductView implements Initializable {
 			productDialog.show();
 		});
 
-		ediProductBtn.setOnAction((e) -> {
-			ProviderProductDto pe = tableView.getSelectionModel().selectedItemProperty().get();
-
-			productNameField.setText(pe.getProductName());
-			productDescField.setText(pe.getDescription());
-			productQtyField.setText(Double.toString(pe.getQtyAvailable()));
-			productPriceField.setText(Double.toString(pe.getPrice()));
-			productDialog.setTransitionType(DialogTransition.CENTER);
-			productDialog.show();
-			// productsObservableList.remove(tableView.getSelectionModel().selectedItemProperty().get());
-		});
-
-		deleteProductBtn.setOnAction((e) -> {
-			if (!tableView.getSelectionModel().isEmpty()) {
-				productDeleteConfirmDialog.setTransitionType(DialogTransition.CENTER);
-				productDeleteConfirmDialog.show();
-			}
-
-			///
-		});
+//		ediProductBtn.setOnAction((e) -> {
+//			ProviderProductDto pe = tableView.getSelectionModel().selectedItemProperty().get();
+//
+//			productNameField.setText(pe.getProductName());
+//			productDescField.setText(pe.getDescription());
+//			productQtyField.setText(Double.toString(pe.getQtyAvailable()));
+//			productPriceField.setText(Double.toString(pe.getPrice()));
+//			productDialog.setTransitionType(DialogTransition.CENTER);
+//			productDialog.show();
+//			// productsObservableList.remove(tableView.getSelectionModel().selectedItemProperty().get());
+//		});
+//
+//		deleteProductBtn.setOnAction((e) -> {
+//			if (!tableView.getSelectionModel().isEmpty()) {
+//				productDeleteConfirmDialog.setTransitionType(DialogTransition.CENTER);
+//				productDeleteConfirmDialog.show();
+//			}
+//
+//			///
+//		});
 
 		root.setOnMouseClicked((e) -> {
 			tableView.getSelectionModel().clearSelection();
@@ -224,8 +297,32 @@ public class ProviderProductView implements Initializable {
 
 				Product product = new Product(null, productNameField.getText(), productDescField.getText(),
 						Double.parseDouble(productPriceField.getText()), null);
-				productService.saveProduct(product, loggedUser.getProvider(),
+				boolean isSaved = productService.saveProduct(product, loggedUser.getProvider(),
 						productQtyField.getText().equals("") ? 0 : Integer.parseInt(productQtyField.getText()));
+				if (isSaved) {
+					productDialog.close();
+					alertDialogTitle.setText("Product Saved Successfully");
+					alertDialog.setTransitionType(DialogTransition.CENTER);
+					alertDialogBtn.getStyleClass().remove("btn-danger");
+					alertDialogBtn.getStyleClass().add("btn-info");
+					alertDialog.show();
+					productNameField.setText("");
+					productDescField.setText("");
+					productQtyField.setText("");
+					productPriceField.setText("");
+					
+				} else {
+					alertDialogTitle.setText("Something went worng.. Unable to save this product");
+					alertDialog.setTransitionType(DialogTransition.CENTER);
+					alertDialogBtn.getStyleClass().remove("btn-info");
+					alertDialogBtn.getStyleClass().add("btn-danger");
+					alertDialog.show();
+				}
+			}else {
+				//validProductName() ?  : 
+				if(!validProductName()) {lbl_pname_err.setVisible(true);} else {lbl_pname_err.setVisible(false);}
+				if(!validProductQty()) {lbl_pqty_err.setVisible(true);} else {lbl_pqty_err.setVisible(false);}
+				if(!validProductPrice()) {lbl_pprice_err.setVisible(true);} else {lbl_pprice_err.setVisible(false);}
 			}
 		});
 
@@ -268,6 +365,14 @@ public class ProviderProductView implements Initializable {
 			}
 		});
 
+		closeDialogButton.setOnAction((e) -> {
+			productNameField.setText("");
+			productDescField.setText("");
+			productQtyField.setText("");
+			productPriceField.setText("");
+			productDialog.close();
+		});
+
 	}
 
 	@FXML
@@ -277,8 +382,26 @@ public class ProviderProductView implements Initializable {
 
 	@FXML
 	public void deleteConfirmFromDialog() {
-		productsObservableList.remove(tableView.getSelectionModel().selectedItemProperty().get());
-		productDeleteConfirmDialog.close();
+		ProviderProductDto ppd = productsObservableList.get(tableView.getSelectionModel().getSelectedIndex());
+		ProductService productService = new ProductService();
+		Boolean isDeleted = productService.deleteProviderProduct(ppd);
+		if(isDeleted) {
+			productsObservableList.remove(tableView.getSelectionModel().selectedItemProperty().get());
+			productDeleteConfirmDialog.close();
+			alertDialogTitle.setText("Product Deleted Successfully");
+			alertDialog.setTransitionType(DialogTransition.CENTER);
+			alertDialogBtn.getStyleClass().remove("btn-danger");
+			alertDialogBtn.getStyleClass().add("btn-info");
+			alertDialog.show();
+
+		} else {
+			alertDialogTitle.setText("Something went worng.. Unable to delete this product");
+			alertDialog.setTransitionType(DialogTransition.CENTER);
+			alertDialogBtn.getStyleClass().remove("btn-info");
+			alertDialogBtn.getStyleClass().add("btn-danger");
+			alertDialog.show();
+		}
+		
 	}
 
 	private boolean validProductName() {
@@ -291,6 +414,15 @@ public class ProviderProductView implements Initializable {
 
 	private boolean validProductQty() {
 		return !productQtyField.getText().isEmpty() && isInteger(productQtyField.getText());
+	}
+
+	void checkFormValidity() {
+		if (validProductName() && validProductPrice() && validProductQty()) {
+			saveProductButton.setDisable(false);
+		} else {
+			saveProductButton.setDisable(true);
+		}
+
 	}
 
 	public boolean isInteger(String s) {

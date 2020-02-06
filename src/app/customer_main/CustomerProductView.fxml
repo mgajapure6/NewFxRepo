@@ -342,7 +342,7 @@
 			<body>
 				<HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="20" alignment="CENTER_RIGHT">
 					<children>
-						<Button fx:id="alertDialogBtn" mnemonicParsing="false" prefHeight="54.0" prefWidth="121.0" styleClass="btn-success" text="Ok">
+						<Button fx:id="alertDialogBtn" mnemonicParsing="false" prefHeight="54.0" prefWidth="121.0" styleClass="btn-info" text="Ok">
 							<font>
 								<Font size="14.0" />
 							</font>

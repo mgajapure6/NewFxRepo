@@ -174,11 +174,11 @@ public class login implements Initializable {
 				e.printStackTrace();
 			}
 
-			App.decorator.setBarHeight(40);
+			App.decorator.setBarHeight(50);
 
 			UserDetail detail = App.getUserDetail();
 			detail.setText(
-					user.getIsCustomer() ? user.getCustomer().getCustomerName() : user.getProvider().getProviderName());
+					user.getIsCustomer() ? "Customer : "+user.getCustomer().getCustomerName() : "Provider : "+user.getProvider().getProviderName());
 			detail.setHeader(user.getUserName());
 
 			App.decorator.addCustom(App.getUserDetail());
