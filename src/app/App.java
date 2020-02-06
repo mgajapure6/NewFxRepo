@@ -11,7 +11,6 @@ import com.gn.decorator.options.ButtonType;
 import com.sun.javafx.application.LauncherImpl;
 
 import app.db.domain.User;
-import app.db.util.HibernateUtil;
 import app.global.Section;
 import app.global.SectionManager;
 import app.global.UserDetail;
@@ -56,7 +55,6 @@ public class App extends Application {
 
 	@Override
 	public synchronized void init() {
-		HibernateUtil.getSessionFactory().openSession().close();
 		section = SectionManager.get();
 		// UserDao userDao = new UserDao();
 //		if (section.isLogged()) {

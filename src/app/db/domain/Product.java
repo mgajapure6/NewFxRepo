@@ -8,10 +8,43 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMappings;
+import javax.persistence.SqlResultSetMapping;
+import javax.persistence.EntityResult;
+import javax.persistence.FieldResult;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
 import javax.persistence.Table;
+
+import app.db.dto.ProductDto;
+import app.db.dto.ProviderProductDto;
 
 @Entity
 @Table
+@SqlResultSetMappings({
+	@SqlResultSetMapping(
+	        name = "ProductDtoMapping",
+	        classes = @ConstructorResult(
+	                targetClass = ProductDto.class,
+	                columns = {
+	                    @ColumnResult(name = "productId", type = Integer.class),
+	                    @ColumnResult(name = "productName"),
+	                    @ColumnResult(name = "description"),
+	                    @ColumnResult(name = "qty", type = Integer.class),
+	                    @ColumnResult(name = "rate" ,type = Double.class),
+	                    @ColumnResult(name = "amount" ,type = Double.class)})),
+	@SqlResultSetMapping(
+	        name = "ProviderProductDtoMapping",
+	        classes = @ConstructorResult(
+	                targetClass = ProviderProductDto.class,
+	                columns = {
+	                    @ColumnResult(name = "providerProductId", type = Integer.class),
+	                    @ColumnResult(name = "productId", type = Integer.class),
+	                    @ColumnResult(name = "productName"),
+	                    @ColumnResult(name = "description"),
+	                    @ColumnResult(name = "price" ,type = Double.class),
+	                    @ColumnResult(name = "qtyAvailable" ,type = Integer.class)}))
+})
 public class Product {
 
 	@Id

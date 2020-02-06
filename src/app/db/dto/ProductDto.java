@@ -9,6 +9,17 @@ public class ProductDto {
 	public Double rate;
 	public Double amount;
 
+	public ProductDto(Integer productId, String productName, String description, Integer qty, Double rate,
+			Double amount) {
+		super();
+		this.productId = productId;
+		this.productName = productName;
+		this.description = description;
+		this.qty = qty;
+		this.rate = rate;
+		this.amount = amount;
+	}
+
 	public Integer getProductId() {
 		return productId;
 	}

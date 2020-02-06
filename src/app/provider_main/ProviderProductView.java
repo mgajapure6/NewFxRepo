@@ -19,6 +19,7 @@ import app.db.dao.ProductDao;
 import app.db.domain.Product;
 import app.db.domain.ProviderProduct;
 import app.db.domain.User;
+import app.db.dto.ProviderProductDto;
 import app.db.services.ProductService;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -44,17 +45,17 @@ public class ProviderProductView implements Initializable {
 	@FXML
 	private StackPane root;
 	@FXML
-	private TableView<ProviderProduct> tableView;
+	private TableView<ProviderProductDto> tableView;
 	@FXML
-	private TableColumn<ProviderProduct, ProviderProduct> c1;
+	private TableColumn<ProviderProductDto, ProviderProductDto> c1;
 	@FXML
-	private TableColumn<ProviderProduct, String> c2;
+	private TableColumn<ProviderProductDto, String> c2;
 	@FXML
-	private TableColumn<ProviderProduct, String> c3;
+	private TableColumn<ProviderProductDto, String> c3;
 	@FXML
-	private TableColumn<String, ProviderProduct> c4;
+	private TableColumn<String, ProviderProductDto> c4;
 	@FXML
-	private TableColumn<ProviderProduct, Double> c5;
+	private TableColumn<ProviderProductDto, Double> c5;
 	@FXML
 	private Button addProductBtn;
 	@FXML
@@ -93,7 +94,7 @@ public class ProviderProductView implements Initializable {
 
 	User loggedUser = App.getUserDetail().getLoggedUser();
 
-	ObservableList<ProviderProduct> productsObservableList = FXCollections.observableArrayList();
+	ObservableList<ProviderProductDto> productsObservableList = FXCollections.observableArrayList();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -102,11 +103,11 @@ public class ProviderProductView implements Initializable {
 		lbl_pqty_err.setVisible(false);
 		lbl_pprice_err.setVisible(false);
 		ProductService productService = new ProductService();
-		//ProductDao productDao = new ProductDao();
-		List<ProviderProduct> providerProducts = productService
+		// ProductDao productDao = new ProductDao();
+		List<ProviderProductDto> providerProducts = productService
 				.getAllProviderProductsByProviderId(loggedUser.getProvider().getProviderId(), loggedUser.getProvider());
 
-		for (ProviderProduct providerProduct : providerProducts) {
+		for (ProviderProductDto providerProduct : providerProducts) {
 			productsObservableList.add(providerProduct);
 		}
 //		for (int i = 1; i <= 100; i++) {
@@ -119,59 +120,59 @@ public class ProviderProductView implements Initializable {
 		c4.setCellValueFactory(new PropertyValueFactory<>("qtyAvailable"));
 		c5.setCellValueFactory(new PropertyValueFactory<>("product.price"));
 		c1.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<ProviderProduct, ProviderProduct>, ObservableValue<ProviderProduct>>() {
+				new Callback<TableColumn.CellDataFeatures<ProviderProductDto, ProviderProductDto>, ObservableValue<ProviderProductDto>>() {
 					@Override
-					public ObservableValue<ProviderProduct> call(
-							TableColumn.CellDataFeatures<ProviderProduct, ProviderProduct> p) {
+					public ObservableValue<ProviderProductDto> call(
+							TableColumn.CellDataFeatures<ProviderProductDto, ProviderProductDto> p) {
 						return new ReadOnlyObjectWrapper(tableView.getItems().indexOf(p.getValue()) + 1 + "");
 					}
 				});
 
 		c2.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<ProviderProduct, String>, ObservableValue<String>>() {
+				new Callback<TableColumn.CellDataFeatures<ProviderProductDto, String>, ObservableValue<String>>() {
 					@Override
-					public ObservableValue<String> call(TableColumn.CellDataFeatures<ProviderProduct, String> pp) {
-						return new SimpleObjectProperty<>(pp.getValue().getProduct().getProductName());
+					public ObservableValue<String> call(TableColumn.CellDataFeatures<ProviderProductDto, String> pp) {
+						return new SimpleObjectProperty<>(pp.getValue().getProductName());
 					}
 
 				});
 		c3.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<ProviderProduct, String>, ObservableValue<String>>() {
+				new Callback<TableColumn.CellDataFeatures<ProviderProductDto, String>, ObservableValue<String>>() {
 					@Override
-					public ObservableValue<String> call(TableColumn.CellDataFeatures<ProviderProduct, String> pp) {
-						return new SimpleObjectProperty<>(pp.getValue().getProduct().getDescription());
+					public ObservableValue<String> call(TableColumn.CellDataFeatures<ProviderProductDto, String> pp) {
+						return new SimpleObjectProperty<>(pp.getValue().getDescription());
 					}
 
 				});
 		c5.setCellValueFactory(
-				new Callback<TableColumn.CellDataFeatures<ProviderProduct, Double>, ObservableValue<Double>>() {
+				new Callback<TableColumn.CellDataFeatures<ProviderProductDto, Double>, ObservableValue<Double>>() {
 					@Override
-					public ObservableValue<Double> call(TableColumn.CellDataFeatures<ProviderProduct, Double> pp) {
-						return new SimpleObjectProperty<>(pp.getValue().getProduct().getPrice());
+					public ObservableValue<Double> call(TableColumn.CellDataFeatures<ProviderProductDto, Double> pp) {
+						return new SimpleObjectProperty<>(pp.getValue().getPrice());
 					}
 
 				});
 		tableView.setItems(productsObservableList);
 
-		FilteredList<ProviderProduct> filteredData = new FilteredList<>(productsObservableList, p -> true);
+		FilteredList<ProviderProductDto> filteredData = new FilteredList<>(productsObservableList, p -> true);
 		searchField.textProperty().addListener((observable, oldValue, newValue) -> {
 			filteredData.setPredicate(productProp -> {
 				if (newValue == null || newValue.isEmpty()) {
 					return true;
 				}
 				String lowerCaseFilter = newValue.toLowerCase();
-				if (productProp.getProduct().getProductName().toLowerCase().contains(lowerCaseFilter)) {
+				if (productProp.getProductName().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
-				} else if (productProp.getProduct().getDescription().toLowerCase().contains(lowerCaseFilter)) {
+				} else if (productProp.getDescription().toLowerCase().contains(lowerCaseFilter)) {
 					return true;
-				} else if (Double.toString(productProp.getProduct().getPrice()).contains(newValue)) {
+				} else if (Double.toString(productProp.getPrice()).contains(newValue)) {
 					return true;
 				}
 				return false; // Does not match.
 			});
 		});
 
-		SortedList<ProviderProduct> sortedData = new SortedList<>(filteredData);
+		SortedList<ProviderProductDto> sortedData = new SortedList<>(filteredData);
 		sortedData.comparatorProperty().bind(tableView.comparatorProperty());
 		tableView.setItems(sortedData);
 
@@ -190,12 +191,12 @@ public class ProviderProductView implements Initializable {
 		});
 
 		ediProductBtn.setOnAction((e) -> {
-			ProviderProduct pe = tableView.getSelectionModel().selectedItemProperty().get();
+			ProviderProductDto pe = tableView.getSelectionModel().selectedItemProperty().get();
 
-			productNameField.setText(pe.getProduct().getProductName());
-			productDescField.setText(pe.getProduct().getDescription());
+			productNameField.setText(pe.getProductName());
+			productDescField.setText(pe.getDescription());
 			productQtyField.setText(Double.toString(pe.getQtyAvailable()));
-			productPriceField.setText(Double.toString(pe.getProduct().getPrice()));
+			productPriceField.setText(Double.toString(pe.getPrice()));
 			productDialog.setTransitionType(DialogTransition.CENTER);
 			productDialog.show();
 			// productsObservableList.remove(tableView.getSelectionModel().selectedItemProperty().get());

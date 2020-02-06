@@ -217,10 +217,10 @@ public class CustomerMyOrderView implements Initializable {
 				myCellStatus.setText(bill.getIsPaid() ? "Paid" : "Unpaid");
 
 				moCellViewOrderBtn.setOnAction(event -> {
-					BillDao billDao = new BillDao();
+					BillService billService = new BillService();
 					ListView<ProductDto> myOrderDetialListView = new ListView<>();
 
-					List<ProductDto> pdts = billDao.getBillDetailById(bill.getBillId());
+					List<ProductDto> pdts = billService.getBillDetailById(bill.getBillId());
 
 					for (ProductDto productDto : pdts) {
 						myOrderDetialListView.getItems().add(productDto);

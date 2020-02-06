@@ -4,17 +4,34 @@ import java.util.Date;
 
 public class ProviderBillDto {
 
-	private Integer billId;
-	private Date billDate;
-	private String status;
-	private String customerName;
-	private String address;
-	private String productName;
-	private String description;
-	private Integer qtyRequested;
-	private Integer qtyAvailable;
-	private Double price;
-	private Double billAmount;
+	private Integer 	billId;
+	private Date 		billDate;
+	private String      status;
+	private String 		customerName;
+	private String 		address;
+	private String 		productName;
+	private String 		description;
+	private Integer 	qtyRequested;
+	private Integer 	qtyAvailable;
+	private Double 		price;
+	private Double 		billAmount;
+
+	public ProviderBillDto(Integer billId, Date billDate, String status, String customerName, String address,
+			String productName, String description, Integer qtyRequested, Integer qtyAvailable, Double price,
+			Double billAmount) {
+		super();
+		this.billId = billId;
+		this.billDate = billDate;
+		this.status = status;
+		this.customerName = customerName;
+		this.address = address;
+		this.productName = productName;
+		this.description = description;
+		this.qtyRequested = qtyRequested;
+		this.qtyAvailable = qtyAvailable;
+		this.price = price;
+		this.billAmount = billAmount;
+	}
 
 	public Integer getBillId() {
 		return billId;

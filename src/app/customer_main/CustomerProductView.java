@@ -154,7 +154,7 @@ public class CustomerProductView implements Initializable {
 		//BillDao billDao = new BillDao();
 		BillService billService = new BillService();
 		List<ProviderProduct> providerProducts = productService.getAllProviderProducts();
-		List<Bill> bills = billService.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
+		//List<Bill> bills = billService.getBillsByCustomerId(loggedUser.getCustomer().getCustomerId());
 
 		for (ProviderProduct providerProduct : providerProducts) {
 			productsObservableList.add(providerProduct);

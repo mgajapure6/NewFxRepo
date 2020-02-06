@@ -8,21 +8,22 @@ import javax.persistence.Persistence;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import app.db.dao.ProductDao1;
+import app.db.dao.ProductDao;
 import app.db.dao.ProviderProductDao;
 import app.db.domain.Product;
 import app.db.domain.Provider;
 import app.db.domain.ProviderProduct;
+import app.db.dto.ProviderProductDto;
 
 public class ProductService {
 
 	private ProviderProductDao providerProductDao;
-	private ProductDao1 productDao1;
+	private ProductDao productDao1;
 
 	public ProductService() {
 		try {
 			providerProductDao = new ProviderProductDao(Persistence.createEntityManagerFactory("MMCStore"));
-			productDao1 = new ProductDao1(Persistence.createEntityManagerFactory("MMCStore"));
+			productDao1 = new ProductDao(Persistence.createEntityManagerFactory("MMCStore"));
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}
@@ -51,7 +52,6 @@ public class ProductService {
 			return false;
 		}
 		return true;
-
 	}
 
 	public List<ProviderProduct> getAllProviderProducts() {
@@ -65,18 +65,16 @@ public class ProductService {
 		return providerProducts;
 	}
 
-	public List<ProviderProduct> getAllProviderProductsByProviderId(Integer providerId, Provider provider) {
-		List<ProviderProduct> providerProducts = new ArrayList<>();
-		List l = null;
+	public List<ProviderProductDto> getAllProviderProductsByProviderId(Integer providerId, Provider provider) {
+		List<ProviderProductDto> providerProducts = new ArrayList<>();
 		try {
-			l = providerProductDao.executeQuery(
-					"Select pp.providerProductId, pp.productId, p.productName, p.description, p.price, pp.qtyAvailable from providerproduct pp, product p where p.productId=pp.productId and providerId ="
-							+ providerId);
-			providerProducts = getTypedList(l, provider);
+			String query = "Select pp.providerProductId, pp.productId, p.productName, p.description, p.price, pp.qtyAvailable from providerproduct pp, product p where p.productId=pp.productId and pp.providerId ="+ providerId;
+			List l = providerProductDao.executeQuery(query,"ProviderProductDtoMapping");
+			//List l = providerProductDao.executeQuery(query,ProviderProduct.class);
+			providerProducts = getProviderProductDtoList(l);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		return providerProducts;
 	}
 
@@ -92,6 +90,17 @@ public class ProductService {
 			providerProducts.add(pp);
 		}
 		return providerProducts;
+	}
+	
+	private List<ProviderProductDto> getProviderProductDtoList(List list) {
+		List<ProviderProductDto> providerProductDto = new ArrayList<>();
+		Gson gson = new Gson();
+		for (Object object : list) {
+			JsonElement jsonElement = gson.toJsonTree(object);
+			ProviderProductDto pp = gson.fromJson(jsonElement, ProviderProductDto.class);
+			providerProductDto.add(pp);
+		}
+		return providerProductDto;
 	}
 
 }

@@ -16,6 +16,7 @@ import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import app.db.domain.User;
+import app.db.dto.ProductDto;
 
 public abstract class BasicDAO<T> {
 	private Class<T> entityClass;
@@ -26,44 +27,50 @@ public abstract class BasicDAO<T> {
 
 	public abstract EntityManager getEntityManager();
 
-	public void create(T entity) throws Exception {
+	public boolean create(T entity) throws Exception {
 		EntityManager em = getEntityManager();
 		try {
 
 			em.getTransaction().begin();
 			em.persist(entity);
 			em.getTransaction().commit();
+			return true;
 		} catch (Exception e) {
 			em.getTransaction().rollback();
 			e.printStackTrace();
+			return false;
 		} finally {
 			em.close();
 		}
 	}
 
-	public void update(T entity) throws Exception {
+	public boolean update(T entity) throws Exception {
 		EntityManager em = getEntityManager();
 		try {
 			em.getTransaction().begin();
 			em.merge(entity);
 			em.getTransaction().commit();
+			return true;
 		} catch (Exception e) {
 			em.getTransaction().rollback();
 			e.printStackTrace();
+			return false;
 		} finally {
 			em.close();
 		}
 	}
 
-	public void delete(T entity, int entityId) throws Exception {
+	public boolean delete(T entity, int entityId) throws Exception {
 		EntityManager em = getEntityManager();
 		try {
 			em.getTransaction().begin();
 			em.remove((T) em.find(this.entityClass, entityId));
 			em.getTransaction().commit();
+			return true;
 		} catch (Exception e) {
 			em.getTransaction().rollback();
 			e.printStackTrace();
+			return false;
 		} finally {
 			em.close();
 		}
@@ -119,7 +126,6 @@ public abstract class BasicDAO<T> {
 			cq.select(cq.from(this.entityClass));
 			returnValues = em.createQuery(cq).getResultList();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -135,7 +141,6 @@ public abstract class BasicDAO<T> {
 			Query q = em.createNativeQuery(query);
 			list = q.getResultList();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
 			e.printStackTrace();
 			return null;
 		} finally {
@@ -149,10 +154,39 @@ public abstract class BasicDAO<T> {
 		List<T> list = new ArrayList<T>();
 		try {
 			Query q = em.createNativeQuery(query);
-			//JavaBeanResult.setQueryResultClass(query, ); 
 			list = q.getResultList();
 		} catch (Exception e) {
-			em.getTransaction().rollback();
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
+		return list;
+	}
+	
+	public List<?> executeQuery(String query, Class<?> resultClass) throws Exception {
+		EntityManager em = getEntityManager();
+		List<?> list = new ArrayList<>();
+		try {
+			Query q = em.createNativeQuery(query, resultClass.getClass());
+			//JavaBeanResult.setQueryResultClass(q, resultClass.getClass()); 
+			list = q.getResultList();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
+		return list;
+	}
+	
+	public List<T> executeQuery(String query, String mappingName) {
+		EntityManager em = getEntityManager();
+		List<T> list = new ArrayList<>();
+		try {
+			Query q = em.createNativeQuery(query, mappingName);
+			list = q.getResultList();
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		} finally {

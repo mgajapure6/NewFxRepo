@@ -6,7 +6,7 @@ import javax.persistence.Persistence;
 
 import app.db.dao.CustomerDao;
 import app.db.dao.ProviderDao;
-import app.db.dao.UserDao1;
+import app.db.dao.UserDao;
 import app.db.domain.Customer;
 import app.db.domain.Provider;
 import app.db.domain.User;
@@ -15,13 +15,13 @@ public class UserService {
 
 	private CustomerDao customerDao;
 	private ProviderDao providerDao;
-	private UserDao1 userDao1;
+	private UserDao userDao1;
 
 	public UserService() {
 		try {
 			customerDao = new CustomerDao(Persistence.createEntityManagerFactory("MMCStore"));
 			providerDao = new ProviderDao(Persistence.createEntityManagerFactory("MMCStore"));
-			userDao1 = new UserDao1(Persistence.createEntityManagerFactory("MMCStore"));
+			userDao1 = new UserDao(Persistence.createEntityManagerFactory("MMCStore"));
 		} catch (Exception ex) {
 			System.out.println(ex);
 		}

@@ -160,8 +160,8 @@ public class Account implements Initializable {
 		User user = new User(null, username.getText(), password.getText(), isCustomer, !isCustomer, null, null,
 				"Active", email.getText(), new Date());
 
-		UserDao userDao = new UserDao();
-		userDao.saveUser(user, customer, provider);
+		UserService userService = new UserService();
+		userService.saveUser(user, customer, provider);
 
 		App.setUserDetail(user);
 

@@ -7,29 +7,24 @@ import java.util.Set;
 
 import javax.persistence.Persistence;
 
-import org.hibernate.Criteria;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 
-import app.db.dao.BillDao1;
+import app.db.dao.BillDao;
 import app.db.dao.BillProviderProductDao;
 import app.db.domain.Bill;
 import app.db.domain.BillProviderProduct;
 import app.db.domain.Customer;
 import app.db.dto.ProductDto;
-import app.db.util.HibernateUtil;
 
 public class BillService {
 
-	private BillDao1 billDao;
+	private BillDao billDao;
 	private BillProviderProductDao billProviderProductDao;
 
 	public BillService() {
 		try {
-			billDao = new BillDao1(Persistence.createEntityManagerFactory("MMCStore"));
+			billDao = new BillDao(Persistence.createEntityManagerFactory("MMCStore"));
 			billProviderProductDao = new BillProviderProductDao(Persistence.createEntityManagerFactory("MMCStore"));
 		} catch (Exception ex) {
 			System.out.println(ex);
@@ -54,20 +49,21 @@ public class BillService {
 	}
 
 	public List<Bill> getBillsByCustomerId(Integer customerId) {
-		String query = "select billId, billDate," + "isPaid,sum(amount) as billAmount "
+		String query = "select billId, billDate,isPaid,sum(amount) as billAmount "
 				+ "from(SELECT a.billId, a.billDate, a.isPaid, b.qtyRequested * e.price as amount "
 				+ "from bill a join billproviderproduct b on (a.billId = b.billId) "
 				+ "join providerproduct c on (b.providerProductId = c.providerProductId) "
 				+ "join product e on (c.productId = e.productId) where a.customerId = " + customerId
 				+ ")t group by billId";
 
-		List<Bill> providerProducts = null;
+		List bills = null;
 		try {
-			providerProducts = getBillTypedList(billDao.executeQuery(query));
+			List bllll = billDao.executeQuery(query, "CustomerBillDtoMapping");
+			bills = getBillTypedList(bllll);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return providerProducts;
+		return bills;
 	}
 
 	public List<ProductDto> getBillDetailById(Integer billId) {
@@ -80,7 +76,8 @@ public class BillService {
 
 		List<ProductDto> pdt = null;
 		try {
-			pdt = getBillProductsList(billDao.executeQuery(query));
+			List lll = billDao.executeQuery(query, "ProductDtoMapping");
+			pdt = getBillProductsList(lll);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -103,6 +100,7 @@ public class BillService {
 		Gson gson = new Gson();
 		for (Object object : list) {
 			JsonElement jsonElement = gson.toJsonTree(object);
+
 			ProductDto b = gson.fromJson(jsonElement, ProductDto.class);
 			pds.add(b);
 		}

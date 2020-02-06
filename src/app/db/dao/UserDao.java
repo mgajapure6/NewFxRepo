@@ -1,61 +1,86 @@
 package app.db.dao;
 
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
+import java.util.ArrayList;
+import java.util.List;
 
-import app.db.domain.Customer;
-import app.db.domain.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
+
 import app.db.domain.User;
-import app.db.util.HibernateUtil;
 
-public class UserDao {
+public class UserDao extends BasicDAO<User> {
 
-	public Boolean saveUser(User user, Customer customer, Provider provider) {
+	private EntityManagerFactory factory;
 
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		if (customer != null) {
-			session.save(customer);
-			user.setCustomer(customer);
-			user.setProvider(null);
-		}
-
-		if (provider != null) {
-			session.save(provider);
-			user.setCustomer(null);
-			user.setProvider(provider);
-		}
-
-		session.saveOrUpdate(user);
-		session.getTransaction().commit();
-		session.close();
-		return true;
-
+	public UserDao(EntityManagerFactory factory) {
+		super(User.class);
+		this.factory = factory;
 	}
 
-	public User getByUsername(String username) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		Criteria criteria = session.createCriteria(User.class);
-		criteria.add(Restrictions.eq("userName", username));
-		User user = (User) criteria.uniqueResult();
-		session.getTransaction().commit();
-		session.close();
+	@Override
+	public EntityManager getEntityManager() {
+		try {
+			return factory.createEntityManager();
+		} catch (Exception ex) {
+			System.out.println("The entity manager cannot be created!");
+			return null;
+
+		}
+	}
+	
+	@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public User findUserByUsernameAndPassword(String username, String pssword) throws Exception {
+		EntityManager em = getEntityManager();
+		User user = null;
+		try {
+			Metamodel m = em.getMetamodel();
+			EntityType<User> User_ = m.entity(User.class);
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery cq = cb.createQuery();
+			Root<User> root = cq.from(User_);
+			List<Predicate> predicates = new ArrayList<Predicate>();
+			predicates.add(cb.equal(root.get("userName"), username));
+			predicates.add(cb.equal(root.get("userPassword"), pssword));
+			cq.select(root).where(predicates.toArray(new Predicate[] {}));
+			user = (User) em.createQuery(cq).getSingleResult();
+			System.out.println("retretuser::" + user);
+		} catch (Exception e) {
+			// em.getTransaction().rollback();
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
 		return user;
 	}
 
-	public User getByUsernameAndPassword(String username, String password) {
-		Session session = HibernateUtil.getSessionFactory().openSession();
-		session.beginTransaction();
-		Criteria criteria = session.createCriteria(User.class);
-		criteria.add(Restrictions.eq("userName", username));
-		criteria.add(Restrictions.eq("userPassword", password));
-		User user = (User) criteria.uniqueResult();
-		session.getTransaction().commit();
-		session.close();
+	public User getByUsername(String userName) {
+		EntityManager em = getEntityManager();
+		User user = null;
+		try {
+			Metamodel m = em.getMetamodel();
+			EntityType<User> User_ = m.entity(User.class);
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+			CriteriaQuery cq = cb.createQuery();
+			Root<User> root = cq.from(User_);
+			List<Predicate> predicates = new ArrayList<Predicate>();
+			predicates.add(cb.equal(root.get("userName"), userName));
+			cq.select(root).where(predicates.toArray(new Predicate[] {}));
+			user = (User) em.createQuery(cq).getSingleResult();
+			System.out.println("retretuser::" + user);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
 		return user;
 	}
-
 }
