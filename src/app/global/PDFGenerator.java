@@ -17,13 +17,13 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class PDFGenerator {
 
-	public void getPdf(String filePath,String title, String[] colArr, String[] dataArr) {
+	public static void getPdf(String filePath,String title, String[] colArr, String[] dataArr) {
 		Document document = new Document();
 		try {
 			PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(filePath));
 			document.open();
 			Paragraph titleP = new Paragraph(title);
-			titleP.setFont(new Font(FontFamily.TIMES_ROMAN, 20, Font.BOLD));
+			//titleP.setFont(new Font(FontFamily.TIMES_ROMAN, 30, Font.BOLD));
 			document.add(titleP);
 			
 			//document.add( Chunk.NEWLINE );
@@ -32,22 +32,22 @@ public class PDFGenerator {
 	        
 			PdfPTable table = new PdfPTable(colArr.length); // 3 columns.
 	        table.setWidthPercentage(100); //Width 100%
-	        table.setSpacingBefore(10f); //Space before table
-	        table.setSpacingAfter(10f); //Space after table
+	        table.setSpacingBefore(20f); //Space before table
+	        table.setSpacingAfter(20f); //Space after table
 	        table.setSpacingBefore(10); 
 	        table.setSpacingAfter(10); 
 			
 	        
 	        //Set Column widths
 	        float[] columnWidths = new float[colArr.length];
-	        for (int i = 1; i <= colArr.length; i++) {
+	        for (int i = 0; i < colArr.length; i++) {
 	        	columnWidths[i]= 1f;
 			}
 	        table.setWidths(columnWidths);
 	        
-	        for (int i = 1; i <= colArr.length; i++) {
+	        for (int i = 0; i < colArr.length; i++) {
 	        	Paragraph p = new Paragraph(title);
-	        	p.setFont(new Font(FontFamily.TIMES_ROMAN, 14, Font.BOLD,new BaseColor(117, 117, 117)));
+	        	//p.setFont(new Font(FontFamily.TIMES_ROMAN, 14, Font.BOLD,new BaseColor(117, 117, 117)));
 	        	PdfPCell cell = new PdfPCell(p);
 	        	cell.setBorderWidth(1);
 	            cell.setBorderColor(new BaseColor(236, 236, 236));
@@ -57,7 +57,7 @@ public class PDFGenerator {
 	            table.addCell(cell);
 			}
 	        
-	        for (int i = 1; i <= colArr.length; i++) {
+	        for (int i = 0; i < colArr.length; i++) {
 	        	Paragraph p = new Paragraph(title);
 	        	p.setFont(new Font(FontFamily.TIMES_ROMAN, 13, Font.NORMAL,new BaseColor(117, 117, 117)));
 	        	PdfPCell cell = new PdfPCell(p);

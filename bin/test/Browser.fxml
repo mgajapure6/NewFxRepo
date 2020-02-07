@@ -8,17 +8,6 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="576.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1" fx:controller="test.Browser">
 	<center>
-		<TabPane>
-			<tabs>
-				<Tab text="PDF test">
-					<content>
-						<WebView fx:id="browser" minHeight="-1.0" minWidth="-1.0" />
-					</content>
-				</Tab>
-			</tabs>
-		</TabPane>
+		<WebView fx:id="browser" minHeight="-1.0" minWidth="-1.0" />
 	</center>
-	<bottom>
-		<Button fx:id="btn" mnemonicParsing="false" text="Open another file" BorderPane.alignment="CENTER" />
-	</bottom>
 </BorderPane>
